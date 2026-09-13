@@ -1,0 +1,2 @@
+# HotelPlus
+Assignment proposal project
