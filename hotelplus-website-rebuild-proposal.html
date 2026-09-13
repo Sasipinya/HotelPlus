@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ข้อเสนอสร้างเว็บไซต์บริษัท HotelPlus ใหม่โดยไม่ใช้ Wix">
+  <title>HotelPlus Corporate Website Rebuild — Proposal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #071a29;
+      --ink: #102b3b;
+      --teal: #087f83;
+      --coral: #ef694d;
+      --sky: #dff1f2;
+      --mist: #edf3f4;
+      --paper: #fbfcfc;
+      --white: #fff;
+      --muted: #60757e;
+      --line: #cbdadd;
+      --shadow: 0 22px 64px rgba(5, 31, 43, .14);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--mist);
+      font-family: "Kanit", sans-serif;
+      line-height: 1.65;
+      text-rendering: optimizeLegibility;
+    }
+
+    button, input, select, textarea { font-family: inherit; }
+    a { color: inherit; }
+
+    :focus-visible {
+      outline: 3px solid var(--coral);
+      outline-offset: 4px;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      padding: 14px clamp(22px, 5vw, 64px);
+      color: var(--white);
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,.13);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      aspect-ratio: 1;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--navy);
+      background: var(--white);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .top-actions { display: flex; align-items: center; gap: 18px; color: #bcd0d6; font-size: 13px; }
+
+    .print-button {
+      padding: 9px 14px;
+      color: var(--white);
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.36);
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.06fr .94fr;
+      min-height: 650px;
+      color: var(--white);
+      background: var(--navy);
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 76px clamp(28px, 6vw, 84px);
+    }
+
+    .kicker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 26px;
+      color: #90d5d1;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .kicker::before { width: 34px; height: 2px; background: var(--coral); content: ""; }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 660px;
+      margin-bottom: 26px;
+      font-size: clamp(48px, 6.2vw, 80px);
+      font-weight: 700;
+      line-height: 1.04;
+      letter-spacing: -.055em;
+    }
+
+    .hero-lead {
+      max-width: 600px;
+      margin-bottom: 36px;
+      color: #c7d9de;
+      font-size: clamp(18px, 2vw, 22px);
+    }
+
+    .hero-result {
+      max-width: 570px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,.16);
+      color: #e5eff1;
+    }
+
+    .hero-result strong { color: #98ddd8; }
+
+    .hero-stage {
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0b3043 0%, #082130 64%, #071a29 100%);
+    }
+
+    .hero-stage::before {
+      position: absolute;
+      width: 470px;
+      height: 470px;
+      border: 1px solid rgba(137,213,210,.18);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .browser {
+      position: relative;
+      z-index: 1;
+      width: min(88%, 470px);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 18px;
+      background: var(--white);
+      box-shadow: 0 32px 70px rgba(0,0,0,.33);
+      transform: rotate(-2deg);
+    }
+
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 15px;
+      background: #e8eef0;
+    }
+
+    .browser-dot { display: block; width: 8px; height: 8px; border-radius: 50%; background: #b3c2c6; }
+    .browser-url { flex: 1; margin-left: 8px; padding: 5px 10px; border-radius: 5px; color: #6b7d84; background: #fff; font-size: 9px; }
+
+    .site-preview { color: var(--navy); }
+    .site-nav { display: flex; align-items: center; justify-content: space-between; padding: 13px 18px; font-size: 9px; }
+    .site-nav b { font-size: 12px; }
+    .site-links { display: flex; gap: 12px; color: #60757e; }
+    .site-hero { display: grid; grid-template-columns: 1.15fr .85fr; min-height: 270px; background: #f0f6f6; }
+    .site-copy { padding: 32px 18px 28px 28px; }
+    .site-copy small { color: var(--teal); font-weight: 700; }
+    .site-copy h2 { margin: 13px 0 12px; font-size: 27px; line-height: 1.08; letter-spacing: -.04em; }
+    .site-copy p { margin-bottom: 18px; color: #60757e; font-size: 9px; line-height: 1.5; }
+    .site-cta { display: inline-block; padding: 8px 12px; border-radius: 999px; color: white; background: var(--coral); font-size: 8px; font-weight: 700; }
+    .site-image { position: relative; margin: 22px 18px 22px 0; overflow: hidden; border-radius: 13px 13px 52px 13px; background: linear-gradient(145deg,#0c6f78,#132e42); }
+    .site-image::before, .site-image::after { position: absolute; border: 1px solid rgba(255,255,255,.24); border-radius: 50%; content: ""; }
+    .site-image::before { inset: 27px; }
+    .site-image::after { inset: 62px; background: rgba(255,255,255,.12); }
+    .site-proof { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid #d9e4e6; }
+    .site-proof span { padding: 13px 16px; color: #587079; font-size: 8px; }
+    .site-proof span + span { border-left: 1px solid #d9e4e6; }
+
+    .stage-note {
+      position: absolute;
+      z-index: 2;
+      right: 3%;
+      bottom: 12%;
+      max-width: 190px;
+      padding: 12px 15px;
+      border-radius: 11px;
+      color: #e4eff1;
+      background: var(--coral);
+      box-shadow: 0 14px 30px rgba(0,0,0,.2);
+      font-size: 11px;
+      transform: rotate(2deg);
+    }
+
+    .section { padding: 88px clamp(28px, 7vw, 92px); }
+    .section-dark { color: var(--white); background: var(--navy); }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: .72fr 1.28fr;
+      gap: 52px;
+      margin-bottom: 54px;
+      align-items: end;
+    }
+
+    .section-head h2 { margin: 0; font-size: clamp(35px, 4.5vw, 57px); line-height: 1.1; letter-spacing: -.045em; }
+    .section-head p { max-width: 620px; margin-bottom: 3px; color: var(--muted); font-size: 18px; }
+    .section-dark .section-head p { color: #acc0c7; }
+
+    .audit {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .audit-item { min-height: 190px; padding: 32px; background: var(--paper); }
+    .audit-item span { color: var(--teal); font-size: 13px; font-weight: 700; }
+    .audit-item h3 { margin: 20px 0 9px; font-size: 21px; }
+    .audit-item p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .thesis {
+      margin-top: 34px;
+      padding: 30px 34px;
+      border-left: 5px solid var(--coral);
+      color: #294955;
+      background: var(--sky);
+      font-size: 19px;
+    }
+
+    .thesis strong { color: var(--navy); }
+
+    .sitemap {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 0;
+      border: 1px solid rgba(255,255,255,.17);
+    }
+
+    .map-root {
+      display: grid;
+      min-height: 390px;
+      place-items: center;
+      padding: 24px;
+      border-right: 1px solid rgba(255,255,255,.17);
+      background: rgba(255,255,255,.04);
+      text-align: center;
+    }
+
+    .map-root strong { display: block; color: #95d9d5; font-size: 24px; }
+    .map-root span { color: #a9bec6; font-size: 12px; }
+
+    .map-groups { display: grid; grid-template-columns: repeat(2,1fr); }
+    .map-group { padding: 28px 30px; }
+    .map-group:nth-child(odd) { border-right: 1px solid rgba(255,255,255,.17); }
+    .map-group:nth-child(n+3) { border-top: 1px solid rgba(255,255,255,.17); }
+    .map-group h3 { margin-bottom: 11px; color: #91d5d1; font-size: 17px; }
+    .map-group p { margin: 0; color: #c6d6da; font-size: 13px; }
+
+    .journey {
+      display: grid;
+      grid-template-columns: repeat(6,1fr);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .journey-step { position: relative; min-height: 175px; padding: 26px 18px; }
+    .journey-step + .journey-step { border-left: 1px solid var(--line); }
+    .journey-step span { display: block; color: var(--coral); font-size: 12px; }
+    .journey-step h3 { margin: 29px 0 7px; font-size: 16px; }
+    .journey-step p { margin: 0; color: var(--muted); font-size: 12px; }
+
+    .foundation {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .foundation h2 { margin-bottom: 20px; font-size: clamp(36px,4.6vw,58px); line-height: 1.08; letter-spacing: -.045em; }
+    .foundation > div > p { color: #b3c6cc; font-size: 17px; }
+
+    .stack {
+      margin: 0;
+      padding: 0;
+      border-top: 1px solid rgba(255,255,255,.16);
+      list-style: none;
+    }
+
+    .stack li { display: grid; grid-template-columns: 110px 1fr; gap: 18px; padding: 17px 0; border-bottom: 1px solid rgba(255,255,255,.16); }
+    .stack strong { color: #92d8d4; }
+    .stack span { color: #d2dfe2; font-size: 14px; }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .benefit { min-height: 220px; padding: 30px; background: var(--paper); }
+    .benefit i { display: block; width: 28px; height: 4px; margin-bottom: 30px; background: var(--teal); }
+    .benefit h3 { margin-bottom: 10px; font-size: 20px; }
+    .benefit p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .scope-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 58px;
+    }
+
+    .scope-box { padding: 34px; border: 1px solid var(--line); }
+    .scope-box h3 { margin-bottom: 20px; font-size: 23px; }
+    .scope-box ul { margin: 0; padding: 0; list-style: none; }
+    .scope-box li { padding: 11px 0; border-top: 1px solid #dce6e8; color: #4f6871; font-size: 14px; }
+    .scope-box li::before { margin-right: 10px; color: var(--teal); content: "✓"; font-weight: 800; }
+
+    .scope-box.not-now { background: #f2f5f6; }
+    .scope-box.not-now li::before { color: #94a4aa; content: "—"; }
+
+    .migration {
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      border: 1px solid rgba(255,255,255,.17);
+    }
+
+    .phase { min-height: 205px; padding: 27px 22px; }
+    .phase + .phase { border-left: 1px solid rgba(255,255,255,.17); }
+    .phase span { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; color: var(--navy); background: #93d8d3; font-size: 12px; font-weight: 800; }
+    .phase h3 { margin: 28px 0 8px; font-size: 17px; }
+    .phase p { margin: 0; color: #a9bec6; font-size: 12px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .metric { padding: 27px 22px; }
+    .metric + .metric { border-left: 1px solid var(--line); }
+    .metric strong { display: block; margin-bottom: 7px; color: var(--teal); font-size: 21px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+
+    .seo-note {
+      margin-top: 44px;
+      padding: 27px 30px;
+      border-left: 5px solid var(--coral);
+      background: var(--sky);
+      color: #385762;
+      font-size: 14px;
+    }
+
+    .seo-note strong { color: var(--navy); }
+
+    .closing {
+      position: relative;
+      overflow: hidden;
+      padding: 92px clamp(28px,8vw,110px);
+      color: var(--white);
+      background: var(--coral);
+    }
+
+    .closing::after { position: absolute; right: -100px; bottom: -180px; width: 440px; height: 440px; border: 70px solid rgba(255,255,255,.13); border-radius: 50%; content: ""; }
+    .closing h2 { position: relative; z-index: 1; max-width: 850px; margin-bottom: 22px; font-size: clamp(40px,5vw,66px); line-height: 1.08; letter-spacing: -.05em; }
+    .closing p { position: relative; z-index: 1; max-width: 680px; font-size: 19px; }
+    .next-step { position: relative; z-index: 1; display: inline-block; margin-top: 17px; padding: 13px 20px; border-radius: 999px; color: var(--white); background: var(--navy); font-weight: 700; text-decoration: none; }
+
+    .sources { padding: 32px clamp(28px,7vw,92px) 42px; color: #657981; background: #eef3f4; font-size: 11px; }
+    .sources strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .sources a { text-underline-offset: 2px; }
+
+    @media (max-width: 900px) {
+      .hero, .section-head, .foundation, .scope-wrap { grid-template-columns: 1fr; }
+      .hero-copy { min-height: 570px; }
+      .hero-stage { min-height: 560px; }
+      .section-head { gap: 20px; }
+      .journey { grid-template-columns: repeat(3,1fr); }
+      .journey-step:nth-child(4) { border-left: 0; }
+      .journey-step:nth-child(n+4) { border-top: 1px solid var(--line); }
+      .benefits { grid-template-columns: 1fr; }
+      .migration { grid-template-columns: 1fr; }
+      .phase + .phase { border-top: 1px solid rgba(255,255,255,.17); border-left: 0; }
+      .metrics { grid-template-columns: repeat(2,1fr); }
+      .metric:nth-child(3) { border-top: 1px solid var(--line); border-left: 0; }
+      .metric:nth-child(4) { border-top: 1px solid var(--line); }
+    }
+
+    @media (max-width: 620px) {
+      .page { width: 100%; margin: 0; }
+      .top-actions span { display: none; }
+      .section, .hero-copy { padding-left: 22px; padding-right: 22px; }
+      .browser { width: 94%; }
+      .audit, .map-groups, .journey, .metrics { grid-template-columns: 1fr; }
+      .sitemap { grid-template-columns: 1fr; }
+      .map-root { min-height: 150px; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.17); }
+      .map-group, .map-group:nth-child(odd), .map-group:nth-child(n+3) { border: 0; }
+      .map-group + .map-group { border-top: 1px solid rgba(255,255,255,.17); }
+      .journey-step + .journey-step, .journey-step:nth-child(4) { border-top: 1px solid var(--line); border-left: 0; }
+      .stack li { grid-template-columns: 1fr; gap: 4px; }
+      .metric + .metric, .metric:nth-child(3) { border-top: 1px solid var(--line); border-left: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    @media print {
+      @page { margin: 12mm; size: A4; }
+      body { background: #fff; }
+      .page { width: 100%; margin: 0; box-shadow: none; }
+      .print-button { display: none; }
+      .hero, .hero-stage, .section-dark, .closing { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .section { padding: 52px 38px; }
+      .hero { min-height: 0; }
+      .hero-copy, .hero-stage { min-height: 520px; }
+      .audit, .sitemap, .journey, .foundation, .benefits, .scope-wrap, .migration, .metrics { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">H+</span> HotelPlus</div>
+      <div class="top-actions">
+        <span>Corporate website rebuild proposal · 2026</span>
+        <button class="print-button" type="button" onclick="window.print()">พิมพ์ / บันทึก PDF</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="kicker">ข้อเสนอสร้างเว็บไซต์บริษัทใหม่</p>
+        <h1>จากเว็บไซต์แนะนำบริษัท สู่เครื่องมือหาลูกค้า</h1>
+        <p class="hero-lead">สร้าง HotelPlus.asia ใหม่โดยไม่ผูกกับ Wix ให้เร็วขึ้น ดูแลเนื้อหาเองได้ และเชื่อมทุกบริการกับเส้นทางการตัดสินใจของเจ้าของโรงแรม</p>
+        <div class="hero-result"><strong>เป้าหมายไม่ใช่แค่หน้าตาใหม่</strong><br>แต่คือเว็บไซต์ที่อธิบายคุณค่า สร้างความเชื่อมั่น เก็บ qualified lead และวัดผลได้</div>
+      </div>
+      <div class="hero-stage">
+        <div class="browser" aria-label="ภาพแนวคิดเว็บไซต์ HotelPlus ใหม่">
+          <div class="browser-bar"><i class="browser-dot"></i><i class="browser-dot"></i><i class="browser-dot"></i><span class="browser-url">hotelplus.asia</span></div>
+          <div class="site-preview">
+            <div class="site-nav"><b>H+ HotelPlus</b><div class="site-links"><span>โซลูชัน</span><span>ผลงาน</span><span>บทความ</span></div></div>
+            <div class="site-hero">
+              <div class="site-copy"><small>ที่ปรึกษาธุรกิจโรงแรม</small><h2>เพิ่มรายได้โรงแรม ด้วยทีมและข้อมูลที่คุณวางใจได้</h2><p>วางแผนราคา การขาย และการตลาด โดยผู้เชี่ยวชาญที่เข้าใจโรงแรมไทย</p><span class="site-cta">ประเมินโอกาสเพิ่มรายได้</span></div>
+              <div class="site-image" aria-hidden="true"></div>
+            </div>
+            <div class="site-proof"><span>ผลลัพธ์จากลูกค้าจริง</span><span>บริการครบทุกช่วงธุรกิจ</span><span>ทีมดูแลต่อเนื่อง</span></div>
+          </div>
+        </div>
+        <div class="stage-note">เว็บไซต์ใหม่ทำหน้าที่เหมือนทีมขายตลอด 24 ชั่วโมง</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>โอกาสจากเว็บปัจจุบัน</h2>
+        <p>HotelPlus มีบริการและประสบการณ์ที่แข็งแรงอยู่แล้ว งาน rebuild คือการจัดสิ่งเหล่านั้นใหม่ให้ผู้เยี่ยมชมเข้าใจง่ายและตัดสินใจติดต่อได้เร็วขึ้น</p>
+      </div>
+      <div class="audit">
+        <article class="audit-item"><span>โครงสร้าง</span><h3>บริการยังแยกเป็น brochure หลายหน้า</h3><p>ควรจัดตามปัญหาและช่วงธุรกิจของเจ้าของโรงแรม เพื่อให้ผู้ใช้รู้ทันทีว่าควรเริ่มจากบริการใด</p></article>
+        <article class="audit-item"><span>ความน่าเชื่อถือ</span><h3>หลักฐานมี แต่ยังเล่าไม่เต็มศักยภาพ</h3><p>รายชื่อโรงแรม ทีมงาน ตัวเลข และเสียงลูกค้าควรถูกเปลี่ยนเป็น case study ที่เห็นปัญหา วิธีทำ และผลลัพธ์</p></article>
+        <article class="audit-item"><span>Conversion</span><h3>ทุกคนถูกพาไป CTA คล้ายกัน</h3><p>Lead จาก Project Planning, Revenue Management และ RevPlus+ ต้องใช้คำถามและเส้นทางติดต่อที่ต่างกัน</p></article>
+        <article class="audit-item"><span>ข้อมูล</span><h3>ต้องมี source of truth เดียว</h3><p>ตัวเลขและรายละเอียดบริการในหน้าสาธารณะควรถูกจัดการจาก CMS กลาง ลดข้อมูลไม่ตรงกันระหว่างหน้าและภาษา</p></article>
+      </div>
+      <div class="thesis"><strong>ข้อเสนอ:</strong> ไม่ย้ายหน้าเดิมออกจาก Wix แบบหนึ่งต่อหนึ่ง แต่จัด information architecture และ conversion journey ใหม่ก่อน แล้วจึงย้ายเนื้อหาที่จำเป็น</div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="section-head">
+        <h2>โครงสร้างเว็บไซต์ใหม่</h2>
+        <p>แยกสิ่งที่ HotelPlus “ให้บริการ” ออกจาก product ที่ลูกค้า “เข้าใช้งาน” และจัด content ให้ตอบคำถามตั้งแต่เริ่มสนใจจนพร้อมปรึกษา</p>
+      </div>
+      <div class="sitemap">
+        <div class="map-root"><div><strong>หน้าแรก</strong><span>คำมั่นสัญญา + หลักฐาน + CTA</span></div></div>
+        <div class="map-groups">
+          <article class="map-group"><h3>โซลูชัน</h3><p>Revenue Management · Marketing Communication · Offline Sales · Project Planning</p></article>
+          <article class="map-group"><h3>ผลิตภัณฑ์</h3><p>RevPlus+ · H+ Reputation AI · ทดลองใช้งาน · เข้าสู่ระบบ</p></article>
+          <article class="map-group"><h3>ผลลัพธ์ลูกค้า</h3><p>Case studies · โรงแรมที่ดูแล · ตัวเลขก่อนและหลัง · เสียงผู้ใช้จริง</p></article>
+          <article class="map-group"><h3>ความรู้และบริษัท</h3><p>Blog · Webinar · Report · About · Team · Careers · Contact</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>หน้าแรกต้องเล่าเรื่องตามลำดับ</h2>
+        <p>ผู้ใช้ไม่ได้เข้ามาเพื่อดูเมนู เข้ามาเพื่อหาคำตอบว่า HotelPlus ช่วยโรงแรมของเขาได้หรือไม่</p>
+      </div>
+      <div class="journey">
+        <article class="journey-step"><span>1</span><h3>คำมั่นสัญญา</h3><p>ช่วยใคร แก้ปัญหาอะไร และได้ผลลัพธ์แบบไหน</p></article>
+        <article class="journey-step"><span>2</span><h3>หลักฐาน</h3><p>โรงแรมที่ดูแล ประสบการณ์ และผลลัพธ์จริง</p></article>
+        <article class="journey-step"><span>3</span><h3>เลือกปัญหา</h3><p>ยอดจอง ราคา การตลาด การลงทุน หรือ corporate sales</p></article>
+        <article class="journey-step"><span>4</span><h3>เห็นวิธีทำ</h3><p>บริการ ทีม เครื่องมือ และรูปแบบการทำงาน</p></article>
+        <article class="journey-step"><span>5</span><h3>อ่านกรณีศึกษา</h3><p>สถานการณ์ก่อนเริ่ม สิ่งที่ทำ และผลลัพธ์</p></article>
+        <article class="journey-step"><span>6</span><h3>ประเมินโอกาส</h3><p>แบบฟอร์มสั้น นัดหมาย หรือคุยผ่าน LINE</p></article>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="foundation">
+        <div>
+          <p class="kicker">Technical foundation</p>
+          <h2>เป็นเจ้าของโค้ด และเปลี่ยนระบบได้</h2>
+          <p>แยก frontend, content และ product app ออกจากกัน เว็บไซต์จึงไม่ติดอยู่กับ page builder รายเดียว และทีมสามารถพัฒนาฟีเจอร์เฉพาะธุรกิจต่อได้</p>
+        </div>
+        <ul class="stack">
+          <li><strong>Frontend</strong><span>Next.js แบบ server-rendered/static สำหรับหน้าเร็ว SEO และต่อยอด product integration</span></li>
+          <li><strong>Content</strong><span>Sanity CMS ให้ทีมแก้บริการ บทความ webinar ทีมงาน และสองภาษาโดยไม่แตะโค้ด</span></li>
+          <li><strong>Conversion</strong><span>แบบฟอร์มแยกตามบริการ พร้อมส่งเข้า CRM, LINE หรืออีเมล และติด conversion event</span></li>
+          <li><strong>Product</strong><span>RevPlus+ และ Reputation AI แยกอยู่บน app subdomain ใช้บัญชีและ security boundary ของตัวเอง</span></li>
+          <li><strong>Delivery</strong><span>Git, preview ก่อนเผยแพร่, managed hosting, CDN, monitoring และ rollback</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>เหตุผลที่ไม่ใช้ Wix</h2>
+        <p>ไม่ใช่เพราะ Wix ทำเว็บไซต์ไม่ได้ แต่เพราะ HotelPlus กำลังมี product และ workflow เฉพาะธุรกิจที่ต้องการพื้นที่เติบโตมากกว่า visual builder</p>
+      </div>
+      <div class="benefits">
+        <article class="benefit"><i></i><h3>ควบคุมประสบการณ์เต็มรูปแบบ</h3><p>สร้าง component, calculator, lead scoring, API integration และ structured data ตามธุรกิจโดยไม่ต้องอ้อมข้อจำกัดของ template</p></article>
+        <article class="benefit"><i></i><h3>พัฒนาและตรวจสอบเป็นระบบ</h3><p>ทุกการเปลี่ยนแปลงอยู่ใน version control มี preview, review และ rollback ลดความเสี่ยงจากการแก้หน้า production โดยตรง</p></article>
+        <article class="benefit"><i></i><h3>แยก content ออกจาก platform</h3><p>เนื้อหาอยู่ใน CMS ที่มีโครงสร้าง สามารถนำไปใช้กับเว็บไซต์ แอป รายงาน หรือช่องทางใหม่ได้โดยไม่เขียนซ้ำ</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>ขอบเขตที่เสนอ</h2>
+        <p>รุ่นแรกต้องทำหน้าที่ corporate site และ lead engine ให้ครบก่อน ส่วนระบบที่ยังไม่มีหลักฐานความต้องการให้แยกออกไป</p>
+      </div>
+      <div class="scope-wrap">
+        <article class="scope-box">
+          <h3>รวมในรุ่นแรก</h3>
+          <ul>
+            <li>Discovery, sitemap และ content structure</li>
+            <li>Design system และ responsive UI</li>
+            <li>หน้าไทย–อังกฤษ พร้อม CMS</li>
+            <li>บริการ ผลิตภัณฑ์ case study blog และ webinar</li>
+            <li>Lead forms, LINE CTA และ analytics events</li>
+            <li>Technical SEO, schema, sitemap และ redirects</li>
+            <li>Content migration, QA และอบรมทีม</li>
+          </ul>
+        </article>
+        <article class="scope-box not-now">
+          <h3>ยังไม่รวม</h3>
+          <ul>
+            <li>สร้าง PMS หรือ booking engine ใหม่</li>
+            <li>ย้าย RevPlus+ เข้า codebase เดียวกับเว็บบริษัท</li>
+            <li>AI chatbot ก่อนมี knowledge base ที่ผ่านการตรวจ</li>
+            <li>page builder อิสระทุก section</li>
+            <li>ฟีเจอร์สมาชิกที่ยังไม่มี use case</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="section-head">
+        <h2>แผนย้ายโดยไม่ทิ้ง SEO</h2>
+        <p>เว็บไซต์ใหม่ต้องเปิดพร้อมข้อมูลครบและ redirect ที่ตรวจแล้ว ไม่ปิดเว็บเก่าก่อนงาน migration พร้อม</p>
+      </div>
+      <div class="migration">
+        <article class="phase"><span>1</span><h3>Inventory</h3><p>เก็บ URL, content, media, metadata และ analytics baseline</p></article>
+        <article class="phase"><span>2</span><h3>Structure</h3><p>กำหนด sitemap, content model และ URL ที่ต้องรักษา</p></article>
+        <article class="phase"><span>3</span><h3>Build</h3><p>พัฒนา design system, pages, CMS และ lead tracking</p></article>
+        <article class="phase"><span>4</span><h3>Migrate & QA</h3><p>ย้ายเนื้อหา ตรวจ mobile, links, forms, language และ metadata</p></article>
+        <article class="phase"><span>5</span><h3>Launch</h3><p>เปิด DNS, 301 redirects, sitemap และติดตาม error/traffic</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>วัดผลจากธุรกิจ</h2>
+        <p>เว็บไซต์ใหม่สำเร็จเมื่อช่วยให้ HotelPlus ได้ lead ที่เหมาะสมและทีมรู้ว่าหน้าใดสร้างโอกาส ไม่ใช่เมื่อแค่ดูทันสมัยขึ้น</p>
+      </div>
+      <div class="metrics">
+        <div class="metric"><strong>Qualified leads</strong><span>จำนวน lead ที่ตรงบริการและพร้อมให้ทีมติดต่อ</span></div>
+        <div class="metric"><strong>Conversion rate</strong><span>จาก service/product page สู่ฟอร์มหรือ LINE</span></div>
+        <div class="metric"><strong>Organic entry</strong><span>หน้าที่พาคนจาก search เข้าสู่เว็บไซต์</span></div>
+        <div class="metric"><strong>Content velocity</strong><span>เวลาที่ทีมใช้เผยแพร่และอัปเดตเนื้อหา</span></div>
+      </div>
+      <div class="seo-note"><strong>SEO migration เป็นงานหลัก ไม่ใช่งานท้ายโครงการ:</strong> รักษา URL เดิมเมื่อทำได้ ทำ redirect แบบ 301/308 ไปยังหน้าที่ตรงกัน หลีกเลี่ยง redirect chain และส่ง sitemap ใหม่ตามแนวทาง Google Search Central</div>
+    </section>
+
+    <section class="closing">
+      <h2>HotelPlus ควรมีเว็บไซต์ที่เติบโตไปพร้อมบริการและผลิตภัณฑ์</h2>
+      <p>ขั้นถัดไป: ทำ content inventory และ prototype หน้าแรก + หน้าบริการหนึ่งหน้า เพื่อยืนยัน direction ก่อนพัฒนาเว็บไซต์ทั้งหมด</p>
+      <a class="next-step" href="mailto:info@hotelplus.asia?subject=HotelPlus%20Website%20Rebuild">เริ่ม Website Discovery</a>
+    </section>
+
+    <footer class="sources">
+      <strong>แหล่งข้อมูลประกอบข้อเสนอ</strong>
+      <a href="https://www.hotelplus.asia/">HotelPlus Website</a> ·
+      <a href="https://www.hotelplus.asia/about-us">About HotelPlus</a> ·
+      <a href="https://www.hotelplus.asia/service">HotelPlus Services</a> ·
+      <a href="https://www.hotelplus.asia/blog">Blog &amp; News</a> ·
+      <a href="https://www.sanity.io/docs/visual-editing">Sanity Visual Editing</a> ·
+      <a href="https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes">Google Site Migration Guide</a>
+    </footer>
+  </main>
+</body>
+</html>
