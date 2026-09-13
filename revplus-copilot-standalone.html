@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>RevPlus Copilot</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F7FC; --surface:#FFFFFF; --surface2:#F7F9FC; --sunken:#EDF3FA;
+  --line:#E1E8F0; --line-soft:#EDF2F7;
+  --ink:#222B36; --ink2:#5F6B7A; --ink3:#95A0AE;
+  --brand:#2D8DF4; --brand-deep:#1676D2; --brand-soft:#EAF4FF;
+  --brass:#D8F000; --brass-soft:#F5FFD6; --brass-line:#E2EE85;
+  --pos:#5F8F00; --warn:#C98700; --neg:#F05D68;
+  --pos-soft:#F1FBCF; --warn-soft:#FFF4D8; --neg-soft:#FFE8EA;
+  --shadow:0 18px 50px rgba(18,74,132,.18);
+  --display:"Anuphan","IBM Plex Sans Thai","Segoe UI",sans-serif;
+  --body:"IBM Plex Sans Thai","Anuphan","Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Menlo,monospace;
+}
+
+*{box-sizing:border-box}
+body{background:#2D8DF4;color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;padding:32px}
+h1,h2,h3,h4{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:3px}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 64px);max-width:1540px;margin:auto;background:var(--bg);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.rail{background:var(--surface);border-right:1px solid var(--line-soft);display:flex;flex-direction:column;gap:3px;padding:20px 14px;position:sticky;top:32px;height:calc(100vh - 64px)}
+.brand{display:flex;align-items:baseline;gap:7px;padding:4px 8px 18px}
+.brand .mark{font-family:var(--display);font-weight:700;font-size:19px;color:var(--ink);letter-spacing:-.02em}
+.brand .mark:before{content:"▥";display:inline-grid;place-items:center;width:24px;height:24px;margin-right:8px;border-radius:7px;background:var(--brand);color:#fff;font-size:13px;vertical-align:1px}
+.brand .sub{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.railgroup{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);padding:14px 8px 6px}
+.navbtn{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:9px 10px;border-radius:9px;text-align:left;color:var(--ink2);font-weight:500}
+.navbtn:hover{background:var(--surface2);color:var(--ink)}
+.navbtn[aria-current="true"]{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.navbtn .dot{width:16px;height:16px;border:1.5px solid currentColor;border-radius:5px;opacity:.5;flex:none}
+.navbtn[aria-current="true"] .dot{opacity:1}
+.navbtn .badge{margin-left:auto;font-size:11px;background:var(--neg);color:#fff;border-radius:999px;padding:0 6px;font-weight:600}
+.railfoot{margin-top:auto;border-top:1px solid var(--line-soft);padding:12px 9px 0;font-size:12px;color:var(--ink3);display:flex;flex-direction:column;gap:8px}
+
+.main{min-width:0;display:flex;flex-direction:column;background:var(--bg)}
+.topbar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:16px 24px;border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.96);position:sticky;top:32px;z-index:5;backdrop-filter:blur(10px)}
+.prop{display:flex;flex-direction:column;line-height:1.25}
+.prop b{font-family:var(--display);font-size:16px;font-weight:600}
+.prop span{font-size:12px;color:var(--ink3)}
+.chipset{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.chip{border:0;background:var(--sunken);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink2)}
+.chip.live{color:var(--brand-deep);background:var(--brand-soft);font-weight:600}
+.page{padding:24px 24px 60px;max-width:1320px;width:100%}
+.hidden{display:none}
+
+/* ---------- typography bits ---------- */
+.eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.h-sec{font-size:19px;font-weight:600;margin-top:2px}
+.lede{color:var(--ink2);max-width:62ch;margin-top:6px}
+.sechead{margin-bottom:14px}
+
+/* ---------- KPI strip ---------- */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi{padding:15px 16px 14px;border:1px solid var(--line-soft);border-radius:12px;background:var(--surface);box-shadow:0 4px 14px rgba(28,65,103,.04);display:flex;flex-direction:column;gap:3px;min-width:0}
+.kpi:first-child{background:var(--brand);border-color:var(--brand);color:#fff}
+.kpi:first-child .lbl,.kpi:first-child .val small{color:rgba(255,255,255,.75)}
+.kpi:first-child .delta{align-self:flex-start;background:var(--brass);color:#344000;border-radius:999px;padding:1px 7px;font-weight:600}
+.kpi .lbl{font-size:11px;color:var(--ink3);letter-spacing:.03em;display:flex;align-items:center;gap:5px}
+.kpi .val{font-family:var(--mono);font-size:22px;font-weight:500;letter-spacing:-.02em;line-height:1.25}
+.kpi .val small{font-size:12px;color:var(--ink3);font-weight:400}
+.delta{font-size:12px;font-family:var(--mono);display:inline-flex;align-items:center;gap:4px}
+.delta.up{color:var(--pos)} .delta.down{color:var(--neg)} .delta.flat{color:var(--ink3)}
+.kpi .spark{margin-top:4px}
+
+/* ---------- panels ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-wide{display:grid;grid-template-columns:1.45fr 1fr;gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line-soft);border-radius:14px;padding:17px 18px 15px;min-width:0;box-shadow:0 4px 14px rgba(28,65,103,.04)}
+.panel h3{font-size:14px;font-weight:600}
+.panel .note{font-size:12px;color:var(--ink3);margin-top:2px}
+.panelhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.legend{display:flex;gap:12px;font-size:11px;color:var(--ink3);flex-wrap:wrap}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:-1px}
+.scroller{overflow-x:auto}
+svg{display:block;max-width:100%;height:auto}
+
+/* ---------- table ---------- */
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:600;padding:0 10px 7px;border-bottom:1px solid var(--line-soft)}
+td{padding:9px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+th.n{text-align:right}
+.bar{height:6px;border-radius:3px;background:var(--brand);display:block}
+.bar.alt{background:var(--brass)}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:5px;white-space:nowrap}
+.tag.up{background:var(--pos-soft);color:var(--pos)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.down{background:var(--neg-soft);color:var(--neg)}
+.tag.flat{background:var(--sunken);color:var(--ink3)}
+
+/* ---------- AI surfaces ---------- */
+.ai{border:1px solid var(--line-soft);border-left:3px solid var(--brass);background:var(--surface);border-radius:12px;padding:14px 16px;box-shadow:0 4px 14px rgba(28,65,103,.04)}
+.aihead{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.aichip{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--brass);background:var(--brass-soft);border-radius:5px;padding:2px 7px}
+.aihead .meta{font-size:11.5px;color:var(--ink3)}
+.src{margin-top:10px;padding-top:9px;border-top:1px dashed var(--brass-line);font-size:11.5px;color:var(--ink3);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.srcchip{font-family:var(--mono);font-size:11px;background:var(--sunken);border:1px solid var(--line-soft);border-radius:5px;padding:1px 6px;color:var(--ink2)}
+mark{background:var(--brand-soft);color:var(--brand-deep);font-family:var(--mono);font-size:.94em;padding:0 3px;border-radius:3px;font-weight:500}
+
+/* ---------- chat ---------- */
+.chatwrap{display:grid;grid-template-columns:1fr 296px;gap:16px;align-items:start}
+.thread{background:var(--surface);border:1px solid var(--line-soft);border-radius:14px;display:flex;flex-direction:column;height:min(660px,74vh);box-shadow:0 4px 14px rgba(28,65,103,.04)}
+.msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:16px}
+.msg{max-width:88%}
+.msg.me{align-self:flex-end;background:var(--brand-soft);color:var(--brand-deep);border-radius:12px 12px 3px 12px;padding:9px 13px}
+.msg.bot{align-self:flex-start;width:100%;max-width:100%}
+.msg.bot .ai p+p{margin-top:9px}
+.msg.bot ul{margin:9px 0 0;padding-left:18px}
+.msg.bot li{margin-bottom:4px}
+.composer{border-top:1px solid var(--line);padding:11px 13px;display:flex;gap:9px;align-items:center}
+.composer input{flex:1;background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-family:inherit;font-size:13.5px;color:var(--ink)}
+.composer input::placeholder{color:var(--ink3)}
+.send{background:var(--brass);color:#344000;border:0;border-radius:9px;padding:9px 15px;font-weight:700}
+.send:disabled{opacity:.45;cursor:not-allowed}
+.asklist{display:flex;flex-direction:column;gap:7px}
+.askbtn{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 12px;color:var(--ink2);font-size:13px;line-height:1.45}
+.askbtn:hover{border-color:var(--brand);color:var(--ink)}
+.askbtn.used{opacity:.5}
+.guard{background:var(--surface2);border:1px dashed var(--line);border-radius:9px;padding:12px 13px;font-size:12px;color:var(--ink2);line-height:1.6}
+.typing span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--brass);margin-right:3px;animation:blink 1.1s infinite}
+.typing span:nth-child(2){animation-delay:.18s}.typing span:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.typing span{animation:none;opacity:.6}}
+
+/* ---------- report ---------- */
+.reviewbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--warn-soft);border:1px solid var(--brass-line);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink2)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:500}
+.btn.primary{background:var(--brass);border-color:var(--brass);color:#344000;font-weight:700}
+.btn:hover{border-color:var(--brand)}
+.report h4{font-size:13px;margin:18px 0 6px;font-weight:600}
+.report p{color:var(--ink2);max-width:66ch}
+.report .kv{display:flex;gap:8px;font-size:12.5px;color:var(--ink3);margin-top:3px}
+
+/* ---------- phone ---------- */
+.phone{width:300px;border:1px solid var(--line);border-radius:22px;background:var(--surface);padding:9px;box-shadow:var(--shadow);flex:none}
+.phonebar{display:flex;align-items:center;gap:8px;padding:7px 9px 10px;border-bottom:1px solid var(--line-soft)}
+.avatar{width:26px;height:26px;border-radius:7px;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700;font-family:var(--display)}
+.phonebody{background:var(--sunken);border-radius:12px;margin-top:9px;padding:12px 10px;display:flex;flex-direction:column;gap:10px;max-height:520px;overflow-y:auto}
+.bub{background:var(--surface);border:1px solid var(--line-soft);border-radius:4px 12px 12px 12px;padding:9px 11px;font-size:12.5px;line-height:1.55}
+.bub .t{font-size:10.5px;color:var(--ink3);margin-top:6px}
+.bub.alert{border-left:3px solid var(--neg)}
+.bub.rate{border-left:3px solid var(--warn)}
+.bub.me{align-self:flex-end;background:var(--brand-soft);color:var(--brand-deep);border-radius:12px 4px 12px 12px;border-color:transparent}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.quick i{font-style:normal;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--ink3)}
+
+.roadmap{display:flex;flex-direction:column;gap:0}
+.step{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line-soft)}
+.step:last-child{border-bottom:0}
+.stepnum{font-family:var(--mono);font-size:12px;color:var(--brand);border:1px solid var(--line);border-radius:7px;height:26px;display:grid;place-items:center;background:var(--surface2)}
+.step b{font-weight:600;font-size:13.5px}
+.step p{font-size:12.5px;color:var(--ink2);margin-top:2px}
+
+@media (max-width:920px){
+  body{padding:0;background:var(--bg)}
+  .app{grid-template-columns:1fr}
+  .app{min-height:100vh;border-radius:0;box-shadow:none}
+  .rail{position:static;height:auto;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);align-items:center;padding:10px}
+  .brand{padding:0 12px 0 4px}.railgroup,.railfoot{display:none}
+  .navbtn{width:auto;white-space:nowrap}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2,.grid-wide,.chatwrap{grid-template-columns:1fr}
+  .page{padding:18px 14px 50px}.topbar{padding:12px 14px;top:0}
+  .phone{width:100%}
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <nav class="rail">
+    <div class="brand"><span class="mark">RevPlus+</span><span class="sub">Copilot</span></div>
+    <div class="railgroup">ข้อมูล</div>
+    <button class="navbtn" data-view="dash" aria-current="true"><span class="dot"></span>ภาพรวม</button>
+    <button class="navbtn" data-view="copilot"><span class="dot"></span>ถาม Copilot</button>
+    <div class="railgroup">งานที่ AI ร่างไว้</div>
+    <button class="navbtn" data-view="report"><span class="dot"></span>รายงานเดือน ส.ค.<span class="badge">1</span></button>
+    <button class="navbtn" data-view="pricing"><span class="dot"></span>คำแนะนำราคา</button>
+    <button class="navbtn" data-view="alerts"><span class="dot"></span>LINE Alert</button>
+    <div class="railgroup">ระบบ</div>
+    <button class="navbtn" data-view="build"><span class="dot"></span>สถาปัตยกรรม</button>
+    <div class="railfoot">
+      <span>ต้นแบบสาธิต — ข้อมูลจำลอง</span>
+    </div>
+  </nav>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="prop">
+        <b>บ้านทะเล รีสอร์ท หัวหิน</b>
+        <span>68 ห้อง · 3.5 ดาว · ซิงก์ล่าสุด 07 ก.ย. 2569 06:10 น.</span>
+      </div>
+      <div class="chipset">
+        <span class="chip live">เชื่อม PMS แล้ว</span>
+        <span class="chip">90 วันย้อนหลัง</span>
+        <span class="chip">฿ THB</span>
+      </div>
+    </header>
+
+    <!-- ===== DASHBOARD ===== -->
+    <section class="page" id="view-dash">
+      <div class="sechead">
+        <div class="eyebrow">ภาพรวม · 1–31 ส.ค. 2569 เทียบกับ ก.ค.</div>
+        <h1 class="h-sec">แปดตัวชี้วัดที่ RevPlus+ สัญญาไว้ อยู่ในหน้าเดียว</h1>
+        <p class="lede">ทุกตัวเลขคำนวณจากข้อมูลการจอง 90 วันย้อนหลัง และเป็นแหล่งเดียวที่ Copilot ดึงไปตอบคำถาม</p>
+      </div>
+
+      <div class="kpis" id="kpis"></div>
+
+      <div class="grid-wide" style="margin-top:16px">
+        <div class="panel">
+          <div class="panelhead">
+            <div><h3>อัตราเข้าพักและ ADR รายวัน</h3><p class="note">60 วันล่าสุด — เห็นจังหวะสุดสัปดาห์และช่วงโลว์ซีซัน ก.ย. ชัดเจน</p></div>
+            <div class="legend"><span><i style="background:var(--brand)"></i>Occupancy</span><span><i style="background:var(--brass)"></i>ADR</span></div>
+          </div>
+          <div class="scroller" id="chart-trend"></div>
+        </div>
+        <div class="panel">
+          <div class="panelhead"><div><h3>เทียบตลาดหัวหิน</h3><p class="note">ADR เสาร์ 12 ก.ย. เทียบคู่แข่ง 5 แห่ง</p></div></div>
+          <div id="chart-comp"></div>
+        </div>
+      </div>
+
+      <div class="grid-wide" style="margin-top:16px">
+        <div class="panel">
+          <div class="panelhead"><div><h3>ช่องทางการขาย — รายได้สุทธิหลังหักคอมมิชชัน</h3><p class="note">แถบเข้มคือเงินที่เข้าโรงแรมจริง แถบจางคือส่วนที่จ่าย OTA</p></div></div>
+          <div class="scroller"><table id="tbl-channel"></table></div>
+        </div>
+        <div class="panel">
+          <div class="panelhead"><div><h3>อัตรายกเลิกรายช่องทาง</h3><p class="note">เส้นประคือค่าเฉลี่ย 90 วันของโรงแรม</p></div></div>
+          <div id="chart-canc"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:16px">
+        <div class="panelhead">
+          <div><h3>คาดการณ์ความต้องการ 14 วันข้างหน้า</h3><p class="note">แถบทึบคือห้องที่จองแล้ว (on the books) แถบโปร่งคือส่วนที่โมเดลคาดว่าจะจองเพิ่ม</p></div>
+          <div class="legend"><span><i style="background:var(--brand)"></i>จองแล้ว</span><span><i style="background:var(--brand-soft);border:1px solid var(--brand)"></i>คาดว่าจะได้เพิ่ม</span><span><i style="background:var(--brass)"></i>ควรปรับราคา</span></div>
+        </div>
+        <div class="scroller" id="chart-forecast"></div>
+      </div>
+    </section>
+
+    <!-- ===== COPILOT ===== -->
+    <section class="page hidden" id="view-copilot">
+      <div class="sechead">
+        <div class="eyebrow">Copilot</div>
+        <h1 class="h-sec">ถามเป็นภาษาไทย ตอบด้วยตัวเลขจากฐานข้อมูล</h1>
+        <p class="lede">ทุกคำตอบสร้างจากผลลัพธ์ query จริง ตัวเลขที่ไฮไลต์คลิกกลับไปดูแถวข้อมูลต้นทางได้ ถ้าไม่มีข้อมูลระบบจะตอบว่าไม่มี ไม่เดา</p>
+      </div>
+      <div class="chatwrap">
+        <div class="thread">
+          <div class="msgs" id="msgs"></div>
+          <form class="composer" id="composer">
+            <input id="qinput" placeholder="เช่น ทำไมรายได้เดือน ส.ค. ตกจาก ก.ค." autocomplete="off">
+            <button class="send" type="submit">ถาม</button>
+          </form>
+        </div>
+        <aside style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div class="eyebrow" style="margin-bottom:8px">คำถามที่ถามบ่อย</div>
+            <div class="asklist" id="asklist"></div>
+          </div>
+          <div class="guard">
+            <b style="color:var(--ink)">กันคำตอบหลอน</b><br>
+            โมเดลภาษาไม่มีสิทธิ์แต่งตัวเลขเอง มันเรียกได้แค่ 6 ฟังก์ชัน query ที่กำหนดไว้ แล้วเรียบเรียงจากผลลัพธ์เท่านั้น ตัวเลขทุกตัวจึงย้อนกลับไปหาแถวข้อมูลต้นทางได้เสมอ
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== REPORT ===== -->
+    <section class="page hidden" id="view-report">
+      <div class="sechead">
+        <div class="eyebrow">รายงานประจำเดือน · สิงหาคม 2569</div>
+        <h1 class="h-sec">AI ร่าง คนตรวจ แล้วค่อยส่ง</h1>
+        <p class="lede">งานที่ consultant เคยนั่งเขียนเองทุกเดือนทุกโรงแรม ตอนนี้ระบบร่างจากตัวเลขจริงให้ก่อน เหลือแค่แก้และกดอนุมัติ</p>
+      </div>
+      <div class="reviewbar" id="reviewbar">
+        <span class="tag warn">รอตรวจ</span>
+        <span>ร่างเมื่อ 01 ก.ย. 2569 07:00 น. · ใช้เวลาสร้าง 4.2 วินาที</span>
+        <span style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn" id="btn-edit">แก้ไข</button>
+          <button class="btn primary" id="btn-approve">อนุมัติและส่งให้โรงแรม</button>
+        </span>
+      </div>
+      <div class="ai report" style="margin-top:14px" id="reportbody"></div>
+    </section>
+
+    <!-- ===== PRICING ===== -->
+    <section class="page hidden" id="view-pricing">
+      <div class="sechead">
+        <div class="eyebrow">คำแนะนำราคา · 7–20 ก.ย. 2569</div>
+        <h1 class="h-sec">ตัวเลขมาจากโมเดล คำอธิบายมาจาก AI</h1>
+        <p class="lede">ราคาที่แนะนำคำนวณจากโมเดลพยากรณ์ความต้องการ ไม่ใช่โมเดลภาษา ส่วน AI ทำหน้าที่อธิบายว่าทำไม เพราะคนจะกดรับก็ต่อเมื่อเข้าใจเหตุผล</p>
+      </div>
+      <div class="panel"><div class="scroller"><table id="tbl-pricing"></table></div></div>
+      <div class="ai" style="margin-top:14px" id="pricingnote"></div>
+    </section>
+
+    <!-- ===== ALERTS ===== -->
+    <section class="page hidden" id="view-alerts">
+      <div class="sechead">
+        <div class="eyebrow">LINE Official Account</div>
+        <h1 class="h-sec">เจ้าของโรงแรมไม่เปิดเว็บทุกวัน แต่เปิด LINE ทุกวัน</h1>
+        <p class="lede">สรุปเมื่อวานส่งเข้า LINE ทุกเช้า 08:00 น. และเตือนทันทีเมื่อระบบจับความผิดปกติได้ ถามต่อในแชทได้เลยโดยไม่ต้องเข้าเว็บ</p>
+      </div>
+      <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start">
+        <div class="phone">
+          <div class="phonebar"><span class="avatar">H+</span><div style="line-height:1.3"><b style="font-size:13px">RevPlus+</b><br><span style="font-size:10.5px;color:var(--ink3)">บ้านทะเล รีสอร์ท หัวหิน</span></div></div>
+          <div class="phonebody" id="linebody"></div>
+        </div>
+        <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:14px">
+          <div class="panel">
+            <h3>กติกาการเตือน</h3>
+            <p class="note" style="margin-bottom:10px">ตั้งค่าได้ต่อโรงแรม ไม่ยิงมั่ว เพราะเตือนบ่อยเกินไปคนจะปิดแจ้งเตือนทิ้ง</p>
+            <table id="tbl-rules"></table>
+          </div>
+          <div class="ai">
+            <div class="aihead"><span class="aichip">หมายเหตุการออกแบบ</span></div>
+            <p style="color:var(--ink2)">ทุกการเตือนต้องบอกได้ว่า “เทียบกับอะไรถึงเรียกว่าผิดปกติ” ไม่ใช่แค่บอกว่าตัวเลขตก ระบบจึงเก็บค่าฐาน 28 วันย้อนหลังของทุกตัวชี้วัดไว้ และยิงเตือนเมื่อค่าปัจจุบันหลุดกรอบ ±2 ส่วนเบี่ยงเบนมาตรฐานเท่านั้น</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BUILD ===== -->
+    <section class="page hidden" id="view-build">
+      <div class="sechead">
+        <div class="eyebrow">จากต้นแบบไปเป็นของจริง</div>
+        <h1 class="h-sec">สิ่งที่ต้องสร้างจริง และลำดับที่ควรทำ</h1>
+        <p class="lede">ต้นแบบนี้จำลองคำตอบไว้ล่วงหน้าเพื่อให้เห็นภาพ flow และ UX ส่วนล่างคือของจริงที่ต้องเขียน</p>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>สแตกที่เสนอ</h3>
+          <table id="tbl-stack" style="margin-top:10px"></table>
+        </div>
+        <div class="panel">
+          <h3>สัญญาของ Copilot (tool calling)</h3>
+          <p class="note" style="margin-bottom:10px">โมเดลเรียกได้แค่ฟังก์ชันเหล่านี้ ห้ามเขียน SQL อิสระ และห้ามตอบตัวเลขที่ไม่ได้มาจากผลลัพธ์</p>
+          <table id="tbl-tools"></table>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>ลำดับการทำ</h3>
+        <p class="note" style="margin-bottom:6px">อย่าเริ่มที่ AI ถ้าข้อมูลยังไม่นิ่ง — AI บนข้อมูลไม่ครบจะทำให้ product ดูแย่กว่าไม่มีเลย</p>
+        <div class="roadmap" id="roadmap"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* ============ 1. ข้อมูลจำลอง ============ */
+const ROOMS = 68;
+const TODAY = new Date(2026, 8, 7); // 7 ก.ย. 2026
+const THMON = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+const THDOW = ["อา","จ","อ","พ","พฤ","ศ","ส"];
+const fmtD = d => d.getDate() + " " + THMON[d.getMonth()];
+const baht = n => "฿" + Math.round(n).toLocaleString("en-US");
+const pct = n => n.toFixed(1) + "%";
+
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R = rng(20260907);
+
+const CH = [
+  {k:"agoda",  n:"Agoda",            share:.30, comm:.18, canc:.115, rate:0.99},
+  {k:"booking",n:"Booking.com",      share:.235,comm:.17, canc:.155, rate:0.98},
+  {k:"direct", n:"เว็บโรงแรม (ตรง)", share:.135,comm:.02, canc:.042, rate:1.07},
+  {k:"trip",   n:"Traveloka",        share:.09, comm:.16, canc:.093, rate:0.97},
+  {k:"expedia",n:"Expedia",          share:.065,comm:.20, canc:.121, rate:0.96},
+  {k:"corp",   n:"บริษัท / Walk-in",  share:.175,comm:.05, canc:.055, rate:0.89}
+];
+
+const MONTH_OCC = {5:.735, 6:.755, 7:.688, 8:.575};
+const MONTH_ADR = {5:2380, 6:2450, 7:2270, 8:2050};
+const DOW_OCC  = [1.03,.90,.88,.91,.95,1.17,1.24];
+const DOW_ADR  = [1.02,.94,.93,.94,.98,1.16,1.22];
+
+const days = [];
+for(let i=90;i>=1;i--){
+  const d = new Date(TODAY); d.setDate(d.getDate()-i);
+  const m = d.getMonth(), dow = d.getDay();
+  let occ = MONTH_OCC[m]*DOW_OCC[dow]*(0.94+R()*0.12);
+  occ = Math.max(.28, Math.min(.99, occ));
+  const sold = Math.round(occ*ROOMS);
+  const adrBase = MONTH_ADR[m]*DOW_ADR[dow]*(0.96+R()*0.08);
+  // แบ่งห้องลงช่องทาง — ส.ค. สัดส่วนช่องทางตรงหดลง OTA เพิ่ม
+  const drift = m===7 ? {direct:-.035, booking:.03, agoda:.01} : (m===8 ? {direct:-.02, booking:.02} : {});
+  let parts = CH.map(c => ({c, w: Math.max(.01, c.share + (drift[c.k]||0) + (R()-.5)*.05)}));
+  const tot = parts.reduce((s,p)=>s+p.w,0);
+  let assigned = 0;
+  parts.forEach((p,i)=>{ p.rooms = i===parts.length-1 ? sold-assigned : Math.round(sold*p.w/tot); assigned += p.rooms; });
+  parts.forEach(p => { p.rooms = Math.max(0,p.rooms); p.rev = p.rooms * adrBase * p.c.rate; });
+  const rev = parts.reduce((s,p)=>s+p.rev,0);
+  const adr = sold ? rev/sold : 0;
+  parts.forEach(p => { p.canc = p.rooms * p.c.canc * (m===7 && p.c.k==="booking" ? 1.45 : 1) * (0.7+R()*0.6); });
+  const canc = parts.reduce((s,p)=>s+p.canc,0);
+  days.push({d, m, dow, occ:sold/ROOMS, sold, adr, rev, canc, parts});
+}
+
+const inMonth = m => days.filter(x=>x.m===m);
+function agg(list){
+  const sold = list.reduce((s,x)=>s+x.sold,0);
+  const rev  = list.reduce((s,x)=>s+x.rev,0);
+  const canc = list.reduce((s,x)=>s+x.canc,0);
+  const nights = list.length*ROOMS;
+  return {n:list.length, sold, rev, canc, adr:rev/sold, occ:sold/nights, revpar:rev/nights,
+          cancRate: canc/(sold+canc)};
+}
+const AUG = agg(inMonth(7)), JUL = agg(inMonth(6)), ALL = agg(days);
+
+// ช่องทางเดือน ส.ค.
+const chanAug = CH.map(c=>{
+  const rooms = inMonth(7).reduce((s,x)=>s+x.parts.find(p=>p.c.k===c.k).rooms,0);
+  const rev   = inMonth(7).reduce((s,x)=>s+x.parts.find(p=>p.c.k===c.k).rev,0);
+  const canc  = inMonth(7).reduce((s,x)=>s+x.parts.find(p=>p.c.k===c.k).canc,0);
+  const roomsJ= inMonth(6).reduce((s,x)=>s+x.parts.find(p=>p.c.k===c.k).rooms,0);
+  const revJ  = inMonth(6).reduce((s,x)=>s+x.parts.find(p=>p.c.k===c.k).rev,0);
+  return {...c, rooms, rev, canc, net: rev*(1-c.comm), fee: rev*c.comm,
+          adr: rev/rooms, cancRate: canc/(rooms+canc),
+          shareNow: 0, shareJul: revJ, roomsJ};
+});
+const revAugTotal = chanAug.reduce((s,c)=>s+c.rev,0);
+const revJulTotal = chanAug.reduce((s,c)=>s+c.shareJul,0);
+chanAug.forEach(c=>{ c.shareNow=c.rev/revAugTotal; c.shareJulPct=c.shareJul/revJulTotal; });
+chanAug.sort((a,b)=>b.net-a.net);
+const bestNet = chanAug[0];
+const direct = chanAug.find(c=>c.k==="direct");
+const booking = chanAug.find(c=>c.k==="booking");
+const feeTotal = chanAug.reduce((s,c)=>s+c.fee,0);
+
+// การแยกส่วนสาเหตุรายได้ ก.ค. → ส.ค.
+const dRev = AUG.rev - JUL.rev;
+const volEffect = (AUG.sold - JUL.sold) * JUL.adr;
+const rateEffect = AUG.sold * (AUG.adr - JUL.adr);
+
+// คู่แข่ง (ADR เสาร์ 12 ก.ย.)
+const SAT = new Date(2026,8,12);
+const compBase = 2180;
+const COMP = [
+  {n:"Sea Sand Sun Hua Hin",  adr: 2690, occ:.86},
+  {n:"บ้านต้นน้ำ บูทีค",        adr: 2450, occ:.79},
+  {n:"เดอะ ไทด์ หัวหิน",       adr: 2280, occ:.74},
+  {n:"หัวหิน การ์เด้น วิลล์",    adr: 1980, occ:.68},
+  {n:"บลูเบย์ รีสอร์ท",         adr: 1890, occ:.61}
+];
+const OUR_SAT_RATE = 2050;
+const compMed = 2280;
+const compAvg = COMP.reduce((s,c)=>s+c.adr,0)/COMP.length;
+const belowCount = COMP.filter(c=>c.adr>OUR_SAT_RATE).length;
+
+// พยากรณ์ 14 วัน
+const fc = [];
+for(let i=0;i<14;i++){
+  const d = new Date(TODAY); d.setDate(d.getDate()+i);
+  const dow=d.getDay();
+  const demand = MONTH_OCC[8]*DOW_OCC[dow]*(0.95+R()*0.1);
+  const otb = Math.max(2, Math.round(demand*ROOMS*(0.32+ i*0.035 + (dow===6||dow===5?0.12:0) + R()*0.08)));
+  const expect = Math.min(ROOMS, Math.round(demand*ROOMS*(0.98+R()*0.08)));
+  const pickup = Math.max(0, expect-otb);
+  const curRate = Math.round((MONTH_ADR[8]*DOW_ADR[dow])/10)*10;
+  const proj = expect/ROOMS;
+  let delta = 0, why = "";
+  if(proj>0.86){ delta = proj>0.93?0.10:0.07; why="จองแล้ว "+Math.round(otb/ROOMS*100)+"% เร็วกว่าจังหวะปกติของวันนี้ และคู่แข่ง "+(dow===6?"3 ใน 5":"2 ใน 5")+" ปิดขายห้องมาตรฐานแล้ว"; }
+  else if(proj<0.52){ delta = proj<0.44?-0.08:-0.05; why="ยอดจองช้ากว่าค่าเฉลี่ย 28 วัน และเป็นวันธรรมดาโลว์ซีซัน ลดราคาเพื่อดันปริมาณคุ้มกว่ารักษาราคา"; }
+  else { why="อยู่ในกรอบปกติ ยังไม่ต้องขยับ"; }
+  fc.push({d,dow,otb,expect,pickup,curRate,newRate:Math.round(curRate*(1+delta)/10)*10,delta,why,proj});
+}
+const upDays = fc.filter(f=>f.delta>0), downDays = fc.filter(f=>f.delta<0);
+const upside = fc.reduce((s,f)=> s + (f.newRate-f.curRate)*f.expect, 0);
+
+/* ============ 2. กราฟ SVG ============ */
+const C = k => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+function svg(w,h,inner){return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img">${inner}</svg>`;}
+
+function sparkline(vals,w,h,color){
+  const mn=Math.min(...vals), mx=Math.max(...vals), r=(mx-mn)||1;
+  const pts=vals.map((v,i)=>[i/(vals.length-1)*w, h-2-((v-mn)/r)*(h-4)]);
+  const dAttr=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const area=dAttr+` L ${w} ${h} L 0 ${h} Z`;
+  return svg(w,h,`<path d="${area}" fill="${color}" opacity=".13"/><path d="${dAttr}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round"/><circle cx="${pts.at(-1)[0].toFixed(1)}" cy="${pts.at(-1)[1].toFixed(1)}" r="2.4" fill="${color}"/>`);
+}
+
+function chartTrend(){
+  const data = days.slice(-60);
+  const W=680,H=250,L=44,Rr=48,T=14,B=32;
+  const iw=W-L-Rr, ih=H-T-B;
+  const occMax=1, adrMin=1600, adrMax=3200;
+  const x=i=>L+i/(data.length-1)*iw;
+  const yo=v=>T+ih-(v/occMax)*ih;
+  const ya=v=>T+ih-((v-adrMin)/(adrMax-adrMin))*ih;
+  let g="";
+  [0,.25,.5,.75,1].forEach(v=>{ g+=`<line x1="${L}" y1="${yo(v).toFixed(1)}" x2="${L+iw}" y2="${yo(v).toFixed(1)}" stroke="${C('--line-soft')}" stroke-width="1"/><text x="${L-8}" y="${(yo(v)+4).toFixed(1)}" text-anchor="end" font-size="10" fill="${C('--ink3')}" font-family="monospace">${Math.round(v*100)}%</text>`; });
+  [1600,2000,2400,2800,3200].forEach(v=>{ g+=`<text x="${L+iw+8}" y="${(ya(v)+4).toFixed(1)}" font-size="10" fill="${C('--ink3')}" font-family="monospace">${(v/1000).toFixed(1)}k</text>`; });
+  const occPath=data.map((d,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+yo(d.occ).toFixed(1)).join(" ");
+  const adrPath=data.map((d,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+ya(d.adr).toFixed(1)).join(" ");
+  g+=`<path d="${occPath} L ${x(data.length-1).toFixed(1)} ${T+ih} L ${L} ${T+ih} Z" fill="${C('--brand')}" opacity=".14"/>`;
+  g+=`<path d="${occPath}" fill="none" stroke="${C('--brand')}" stroke-width="1.9"/>`;
+  g+=`<path d="${adrPath}" fill="none" stroke="${C('--brass')}" stroke-width="1.6" stroke-dasharray="1 0" opacity=".95"/>`;
+  data.forEach((d,i)=>{ if(d.d.getDate()===1||i===0){ g+=`<line x1="${x(i).toFixed(1)}" y1="${T}" x2="${x(i).toFixed(1)}" y2="${T+ih}" stroke="${C('--line')}" stroke-width="1" stroke-dasharray="3 3"/><text x="${x(i).toFixed(1)}" y="${H-10}" font-size="10" fill="${C('--ink3')}" text-anchor="middle">${fmtD(d.d)}</text>`; } });
+  const last=data.at(-1);
+  g+=`<circle cx="${x(data.length-1).toFixed(1)}" cy="${yo(last.occ).toFixed(1)}" r="3.4" fill="${C('--brand')}"/>`;
+  return svg(W,H,g);
+}
+
+function chartComp(){
+  const all=[...COMP.map(c=>({...c,us:false})),{n:"บ้านทะเล (เรา)",adr:OUR_SAT_RATE,occ:.71,us:true}].sort((a,b)=>b.adr-a.adr);
+  const W=330,H=200,L=8,T=8,rowH=30;
+  const mn=1700,mx=2800, bx=140, bw=W-bx-46;
+  const myPre=T+all.length*rowH+6, mwPre=(compMed-mn)/(mx-mn)*bw;
+  let g=`<line x1="${bx+mwPre}" y1="${T}" x2="${bx+mwPre}" y2="${myPre-2}" stroke="${C('--brass')}" stroke-width="1.2" stroke-dasharray="4 3" opacity=".7"/>`;
+  all.forEach((c,i)=>{
+    const y=T+i*rowH;
+    const w=Math.max(4,(c.adr-mn)/(mx-mn)*bw);
+    g+=`<text x="${L}" y="${y+14}" font-size="11.5" fill="${c.us?C('--ink'):C('--ink2')}" font-weight="${c.us?600:400}">${c.n.length>18?c.n.slice(0,17)+"…":c.n}</text>`;
+    g+=`<rect x="${bx}" y="${y+4}" width="${w.toFixed(1)}" height="12" rx="3" fill="${c.us?C('--brand'):C('--line')}"/>`;
+    g+=`<rect x="${(bx+w+4).toFixed(1)}" y="${y+3}" width="46" height="14" fill="${C('--surface')}"/>`;
+    g+=`<text x="${bx+w+8}" y="${y+14}" font-size="11" font-family="monospace" fill="${c.us?C('--brand'):C('--ink3')}" font-weight="${c.us?600:400}">${baht(c.adr)}</text>`;
+  });
+  const my=myPre;
+  g+=`<text x="${bx+mwPre}" y="${my+11}" font-size="10" fill="${C('--brass')}" text-anchor="middle">มัธยฐานตลาด ${baht(compMed)}</text>`;
+  return svg(W,my+18,g);
+}
+
+function chartCanc(){
+  const rows=[...chanAug].sort((a,b)=>b.cancRate-a.cancRate);
+  const W=330,rowH=27,T=6,L=118,bw=W-L-42;
+  const mx=Math.max(...rows.map(r=>r.cancRate))*1.18;
+  const h=T+rows.length*rowH+16;
+  const ax=L+ALL.cancRate/mx*bw;
+  let g=`<line x1="${ax.toFixed(1)}" y1="${T-2}" x2="${ax.toFixed(1)}" y2="${h-14}" stroke="${C('--ink3')}" stroke-width="1" stroke-dasharray="3 3" opacity=".8"/>`;
+  rows.forEach((r,i)=>{
+    const y=T+i*rowH, w=r.cancRate/mx*bw;
+    const hot=r.cancRate>ALL.cancRate*1.25;
+    g+=`<text x="0" y="${y+13}" font-size="11.5" fill="${C('--ink2')}">${r.n}</text>`;
+    g+=`<rect x="${L}" y="${y+3}" width="${w.toFixed(1)}" height="11" rx="3" fill="${hot?C('--neg'):C('--line')}"/>`;
+    g+=`<rect x="${(L+w+3).toFixed(1)}" y="${y+2}" width="40" height="13" fill="${C('--surface')}"/>`;
+    g+=`<text x="${L+w+7}" y="${y+13}" font-size="11" font-family="monospace" fill="${hot?C('--neg'):C('--ink3')}">${pct(r.cancRate*100)}</text>`;
+  });
+  g+=`<text x="${ax.toFixed(1)}" y="${h-2}" font-size="10" fill="${C('--ink3')}" text-anchor="middle">เฉลี่ย ${pct(ALL.cancRate*100)}</text>`;
+  return svg(W,h,g);
+}
+
+function chartForecast(){
+  const W=700,H=210,L=34,T=14,B=46;
+  const bwid=(W-L-14)/fc.length, ih=H-T-B;
+  const y=v=>T+ih-(v/ROOMS)*ih;
+  let g="";
+  [0,17,34,51,68].forEach(v=>{ g+=`<line x1="${L}" y1="${y(v).toFixed(1)}" x2="${W-8}" y2="${y(v).toFixed(1)}" stroke="${C('--line-soft')}"/><text x="${L-7}" y="${(y(v)+4).toFixed(1)}" text-anchor="end" font-size="10" font-family="monospace" fill="${C('--ink3')}">${v}</text>`; });
+  fc.forEach((f,i)=>{
+    const x=L+i*bwid+bwid*0.16, w=bwid*0.68;
+    g+=`<rect x="${x.toFixed(1)}" y="${y(f.expect).toFixed(1)}" width="${w.toFixed(1)}" height="${(ih-(y(f.expect)-T)).toFixed(1)}" rx="2" fill="${C('--brand-soft')}" stroke="${C('--brand')}" stroke-width="1" stroke-dasharray="2 2"/>`;
+    g+=`<rect x="${x.toFixed(1)}" y="${y(f.otb).toFixed(1)}" width="${w.toFixed(1)}" height="${(ih-(y(f.otb)-T)).toFixed(1)}" rx="2" fill="${C('--brand')}"/>`;
+    if(f.delta!==0){
+      const cy=y(f.expect)-9;
+      g+=`<circle cx="${(x+w/2).toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" fill="${C('--brass')}"/>`;
+      g+=`<text x="${(x+w/2).toFixed(1)}" y="${(cy+3).toFixed(1)}" font-size="7.5" fill="${C('--surface')}" text-anchor="middle" font-weight="700">${f.delta>0?"↑":"↓"}</text>`;
+    }
+    g+=`<text x="${(x+w/2).toFixed(1)}" y="${H-26}" font-size="10" fill="${C('--ink2')}" text-anchor="middle" font-family="monospace">${f.d.getDate()}</text>`;
+    g+=`<text x="${(x+w/2).toFixed(1)}" y="${H-13}" font-size="9.5" fill="${(f.dow===0||f.dow===6)?C('--brand'):C('--ink3')}" text-anchor="middle">${THDOW[f.dow]}</text>`;
+  });
+  return svg(W,H,g);
+}
+
+/* ============ 3. เรนเดอร์ ============ */
+function deltaTag(cur,prev,unit,invert){
+  const d=cur-prev, up=d>0, good=invert?!up:up;
+  const cls=Math.abs(d)<1e-9?"flat":(good?"up":"down");
+  const sign=up?"+":"−";
+  return `<span class="delta ${cls}">${sign}${unit(Math.abs(d))} <span style="opacity:.7">vs ก.ค.</span></span>`;
+}
+function kpi(lbl,val,sub,spark){
+  return `<div class="kpi"><span class="lbl">${lbl}</span><span class="val">${val}</span>${sub||""}${spark?`<span class="spark">${spark}</span>`:""}</div>`;
+}
+const augDays=inMonth(7);
+document.getElementById("kpis").innerHTML =
+  kpi("อัตราเข้าพัก (Occupancy)", pct(AUG.occ*100), deltaTag(AUG.occ*100,JUL.occ*100,v=>v.toFixed(1)+" จุด"), sparkline(augDays.map(d=>d.occ),150,26,C('--brand'))) +
+  kpi("ราคาเฉลี่ยต่อห้อง (ADR)", baht(AUG.adr), deltaTag(AUG.adr,JUL.adr,v=>baht(v).replace("฿","฿")), sparkline(augDays.map(d=>d.adr),150,26,C('--brass'))) +
+  kpi("RevPAR", baht(AUG.revpar), deltaTag(AUG.revpar,JUL.revpar,v=>baht(v))) +
+  kpi("รายได้ห้องพักรวม", baht(AUG.rev), deltaTag(AUG.rev,JUL.rev,v=>baht(v))) +
+  kpi("Room nights ที่ขายได้", AUG.sold.toLocaleString(), deltaTag(AUG.sold,JUL.sold,v=>Math.round(v).toLocaleString()+" คืน")) +
+  kpi("อัตรายกเลิก", pct(AUG.cancRate*100), deltaTag(AUG.cancRate*100,JUL.cancRate*100,v=>v.toFixed(1)+" จุด",true)) +
+  kpi("ช่องทางทำเงินสุทธิสูงสุด", bestNet.n.split(" ")[0], `<span class="delta flat">สุทธิ ${baht(bestNet.net)}</span>`) +
+  kpi("ค่าคอมมิชชันที่จ่ายไป", baht(feeTotal), `<span class="delta flat">${pct(feeTotal/AUG.rev*100)} ของรายได้</span>`);
+
+document.getElementById("chart-trend").innerHTML = chartTrend();
+document.getElementById("chart-comp").innerHTML = chartComp();
+document.getElementById("chart-canc").innerHTML = chartCanc();
+document.getElementById("chart-forecast").innerHTML = chartForecast();
+
+const maxNet=Math.max(...chanAug.map(c=>c.rev));
+document.getElementById("tbl-channel").innerHTML =
+ `<thead><tr><th>ช่องทาง</th><th class="n">ห้อง</th><th class="n">ADR</th><th style="width:34%">รายได้สุทธิ / ค่าคอม</th><th class="n">สุทธิ</th></tr></thead><tbody>` +
+ chanAug.map(c=>`<tr>
+   <td>${c.n}<div style="font-size:11px;color:var(--ink3)">คอม ${Math.round(c.comm*100)}%</div></td>
+   <td class="n">${c.rooms.toLocaleString()}</td>
+   <td class="n">${baht(c.adr)}</td>
+   <td><div style="display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--sunken);margin-top:6px;width:${(c.rev/maxNet*100).toFixed(1)}%">
+       <span style="flex:${(1-c.comm)};background:var(--brand)"></span><span style="flex:${c.comm};background:var(--brass);opacity:.55"></span></div>
+       <div style="font-size:11px;color:var(--ink3);margin-top:4px">จ่าย OTA ${baht(c.fee)}</div></td>
+   <td class="n">${baht(c.net)}</td></tr>`).join("") + `</tbody>`;
+
+document.getElementById("tbl-rules").innerHTML =
+ `<thead><tr><th>เหตุการณ์</th><th>เกณฑ์</th><th>ส่งเมื่อ</th></tr></thead><tbody>` +
+ [["ราคาต่ำกว่าคู่แข่ง","ต่ำกว่ามัธยฐาน comp set เกิน 8%","ทันที"],
+  ["ยอดจองช้าผิดปกติ","OTB ต่ำกว่าค่าเฉลี่ย 28 วัน เกิน 2 SD","ทันที"],
+  ["ยกเลิกพุ่ง","อัตรายกเลิกรายวัน > 2 SD","ทันที"],
+  ["สรุปเมื่อวาน","ทุกวัน","08:00 น."],
+  ["สรุปสัปดาห์","ทุกวันจันทร์","08:30 น."]].map(r=>`<tr><td>${r[0]}</td><td style="color:var(--ink3)">${r[1]}</td><td class="n">${r[2]}</td></tr>`).join("")+`</tbody>`;
+
+/* ---- ตารางราคา ---- */
+document.getElementById("tbl-pricing").innerHTML =
+ `<thead><tr><th>วันที่</th><th class="n">จองแล้ว</th><th class="n">คาดการณ์</th><th class="n">ราคาปัจจุบัน</th><th class="n">แนะนำ</th><th>เหตุผลที่ AI อธิบาย</th></tr></thead><tbody>` +
+ fc.map(f=>{
+   const cls = f.delta>0?"up":(f.delta<0?"down":"flat");
+   const lbl = f.delta===0?"คงเดิม":(f.delta>0?"+":"−")+Math.abs(Math.round(f.delta*100))+"%";
+   return `<tr>
+     <td><b>${f.d.getDate()} ${THMON[f.d.getMonth()]}</b> <span style="color:var(--ink3)">${THDOW[f.dow]}</span></td>
+     <td class="n">${f.otb}<span style="color:var(--ink3)">/${ROOMS}</span></td>
+     <td class="n">${Math.round(f.proj*100)}%</td>
+     <td class="n">${baht(f.curRate)}</td>
+     <td class="n"><b>${baht(f.newRate)}</b><br><span class="tag ${cls}">${lbl}</span></td>
+     <td style="color:var(--ink2);font-size:12.5px">${f.why}</td></tr>`;
+ }).join("") + `</tbody>`;
+
+document.getElementById("pricingnote").innerHTML = `
+  <div class="aihead"><span class="aichip">AI อธิบาย</span><span class="meta">โมเดลพยากรณ์ gradient boosting · ข้อมูลฝึก 24 เดือน · MAPE 6.8%</span></div>
+  <p style="color:var(--ink2)">ใน 14 วันข้างหน้ามี <mark>${upDays.length} วัน</mark> ที่ควรขึ้นราคาและ <mark>${downDays.length} วัน</mark> ที่ควรลด ถ้ารับคำแนะนำทั้งหมดและยอดจองเป็นไปตามคาด รายได้ห้องพักจะเพิ่มประมาณ <mark>${baht(upside)}</mark> เทียบกับการคงราคาเดิมไว้เฉย ๆ</p>
+  <p style="color:var(--ink2)">วันที่แนะนำให้ลดราคาเป็นวันธรรมดาโลว์ซีซันที่ยอดจองยังต่ำกว่า ${Math.round(Math.min(...downDays.map(d=>d.proj))*100)}% การลดราคาที่นี่ไม่ได้ทำลาย ADR ทั้งเดือน เพราะห้องที่ขายไม่ออกคือรายได้ที่หายไปถาวร</p>
+  <div class="src">ข้อมูลอ้างอิง<span class="srcchip">forecast_daily · 14 แถว</span><span class="srcchip">comp_set_rates · 12 ก.ย.</span><span class="srcchip">booking_pace · 28 วัน</span></div>`;
+
+/* ---- รายงานเดือน ---- */
+const revChangePct = (dRev/JUL.rev*100);
+document.getElementById("reportbody").innerHTML = `
+  <div class="aihead"><span class="aichip">AI ร่าง</span><span class="meta">อ้างอิงข้อมูลจริง 31 วัน · ยังไม่ได้ส่งให้ลูกค้า</span></div>
+  <h4>สรุปผู้บริหาร</h4>
+  <p>เดือนสิงหาคม 2569 โรงแรมทำรายได้ห้องพัก <mark>${baht(AUG.rev)}</mark> ${dRev<0?"ลดลง":"เพิ่มขึ้น"} <mark>${Math.abs(revChangePct).toFixed(1)}%</mark> จากเดือนกรกฎาคม อัตราเข้าพักอยู่ที่ <mark>${pct(AUG.occ*100)}</mark> และ ADR <mark>${baht(AUG.adr)}</mark></p>
+  <h4>รายได้ที่หายไปมาจากไหน</h4>
+  <p>แยกสาเหตุออกได้เป็นสองส่วน ปริมาณห้องที่ขายได้น้อยลง ${Math.abs(AUG.sold-JUL.sold).toLocaleString()} คืน คิดเป็นผลกระทบ <mark>${baht(Math.abs(volEffect))}</mark> และราคาเฉลี่ยที่ ${AUG.adr<JUL.adr?"ต่ำลง":"สูงขึ้น"} ${baht(Math.abs(AUG.adr-JUL.adr))} ต่อห้อง คิดเป็น <mark>${baht(Math.abs(rateEffect))}</mark> ${Math.abs(volEffect)>Math.abs(rateEffect)?"ปริมาณจึงเป็นตัวการหลัก ไม่ใช่ราคา":"ราคาจึงเป็นตัวการหลัก ไม่ใช่ปริมาณ"}</p>
+  <h4>สิ่งที่ต้องจับตา</h4>
+  <p>สัดส่วนรายได้จากช่องทางตรงลดจาก <mark>${pct(direct.shareJulPct*100)}</mark> เหลือ <mark>${pct(direct.shareNow*100)}</mark> ขณะที่ Booking.com เพิ่มขึ้นเป็น <mark>${pct(booking.shareNow*100)}</mark> การพึ่ง OTA มากขึ้นทำให้เดือนนี้จ่ายค่าคอมมิชชันรวม <mark>${baht(feeTotal)}</mark> หรือ ${pct(feeTotal/AUG.rev*100)} ของรายได้ทั้งหมด</p>
+  <p>อัตรายกเลิกของ Booking.com อยู่ที่ <mark>${pct(booking.cancRate*100)}</mark> สูงกว่าค่าเฉลี่ยโรงแรมที่ ${pct(ALL.cancRate*100)} อยู่มาก ควรตรวจว่านโยบายยกเลิกฟรีบนช่องทางนี้ตั้งกว้างเกินไปหรือไม่</p>
+  <h4>ข้อเสนอสำหรับเดือนกันยายน</h4>
+  <p>กันยายนเป็นโลว์ซีซัน ยอดจองล่วงหน้า 14 วันข้างหน้าชี้ว่าอัตราเข้าพักจะอยู่ราว ${Math.round(fc.reduce((s,f)=>s+f.proj,0)/fc.length*100)}% แนะนำสองอย่าง หนึ่ง ดันแพ็กเกจวันธรรมดาผ่านช่องทางตรงเพื่อดึงสัดส่วนช่องทางตรงกลับ สอง ปรับราคาตามคำแนะนำรายวันในหน้า “คำแนะนำราคา” ซึ่งประเมินว่าจะเพิ่มรายได้ราว ${baht(upside)}</p>
+  <div class="src">ข้อมูลอ้างอิง<span class="srcchip">daily_stats · 1–31 ส.ค. (31 แถว)</span><span class="srcchip">channel_mix · 2 เดือน</span><span class="srcchip">cancellations · 62 แถว</span><span class="srcchip">forecast_daily · 14 แถว</span></div>`;
+
+document.getElementById("btn-approve").onclick = () => {
+  document.getElementById("reviewbar").innerHTML =
+   `<span class="tag up">อนุมัติแล้ว</span><span>ส่งให้บ้านทะเล รีสอร์ท หัวหิน เรียบร้อย · ตรวจโดย consultant · ${new Date().toLocaleDateString("th-TH")}</span>`;
+  document.querySelector('.navbtn[data-view="report"] .badge')?.remove();
+};
+document.getElementById("btn-edit").onclick = () => {
+  const b=document.getElementById("reportbody");
+  b.contentEditable = b.contentEditable==="true" ? "false" : "true";
+  b.style.outline = b.contentEditable==="true" ? "2px solid var(--brand)" : "";
+};
+
+/* ---- LINE ---- */
+const y1 = days.at(-1);
+document.getElementById("linebody").innerHTML = [
+ `<div class="bub"><b>สรุปเมื่อวาน · ${fmtD(y1.d)}</b><br>
+   ขายได้ ${y1.sold}/${ROOMS} ห้อง (${pct(y1.occ*100)})<br>
+   ADR ${baht(y1.adr)} · รายได้ ${baht(y1.rev)}<br>
+   ยกเลิก ${Math.round(y1.canc)} ห้อง
+   <div class="t">08:00 น.</div></div>`,
+ `<div class="bub rate"><b>⚠︎ ราคาต่ำกว่าตลาด</b><br>
+   เสาร์ 12 ก.ย. เราตั้ง ${baht(OUR_SAT_RATE)} ขณะที่มัธยฐานคู่แข่งอยู่ ${baht(compMed)} และมี ${belowCount} ใน 5 แห่งตั้งสูงกว่าเรา<br>
+   แนะนำขยับเป็น ${baht(fc.find(f=>f.d.getDate()===12)?.newRate||2250)}
+   <div class="t">09:12 น.</div></div>`,
+ `<div class="bub me">ทำไมถึงแนะนำขึ้นราคา</div>`,
+ `<div class="bub"><b>เพราะยอดจองเร็วกว่าปกติ</b><br>
+   ตอนนี้จองแล้ว ${fc.find(f=>f.d.getDate()===12)?.otb||0} ห้องจาก ${ROOMS} ตั้งแต่ยังเหลืออีก 5 วัน ปกติช่วงเวลาเดียวกันจะอยู่ราว 60% ของนี้ และคู่แข่ง 3 ใน 5 ปิดขายห้องมาตรฐานแล้ว
+   <div class="quick"><i>ดูข้อมูลเต็ม</i><i>รับราคานี้</i><i>ไม่ปรับ</i></div>
+   <div class="t">09:12 น.</div></div>`,
+ `<div class="bub alert"><b>⚠︎ ยกเลิกผิดปกติ</b><br>
+   Booking.com ยกเลิก 7 ห้องใน 24 ชม. เทียบค่าเฉลี่ย 2.4 ห้อง/วัน<br>
+   ทั้งหมดเป็นเรตยกเลิกฟรีที่จองไว้เกิน 30 วัน
+   <div class="t">14:38 น.</div></div>`
+].join("");
+
+/* ---- build ---- */
+document.getElementById("tbl-stack").innerHTML =
+ `<thead><tr><th>ชั้น</th><th>เลือกใช้</th></tr></thead><tbody>` +
+ [["หน้าเว็บ","Next.js (App Router) + TypeScript + Tailwind — SSR สำหรับ dashboard, ISR สำหรับหน้า marketing"],
+  ["ฐานข้อมูล","PostgreSQL แยก schema ต่อโรงแรม + Row Level Security กันข้อมูลข้ามลูกค้า"],
+  ["รับข้อมูล","เฟสแรก import Excel/CSV ตามที่ทีม consult ใช้อยู่ · เฟสสอง webhook จาก PMS / channel manager"],
+  ["โมเดลพยากรณ์","Python job รายคืน (gradient boosting) เขียนผลลง forecast_daily"],
+  ["ชั้น AI","Vercel AI SDK — tool calling + streaming, โมเดลเล็กสำหรับสรุป โมเดลใหญ่เฉพาะงานวิเคราะห์"],
+  ["ช่องทางออก","LINE Messaging API (push + webhook ตอบกลับ), PDF รายงานผ่าน headless Chromium"],
+  ["Auth","NextAuth — หลายผู้ใช้ต่อโรงแรม, บทบาท เจ้าของ / GM / consultant"]
+ ].map(r=>`<tr><td style="white-space:nowrap;color:var(--ink3)">${r[0]}</td><td>${r[1]}</td></tr>`).join("")+`</tbody>`;
+
+document.getElementById("tbl-tools").innerHTML =
+ `<thead><tr><th>ฟังก์ชัน</th><th>คืนค่า</th></tr></thead><tbody>` +
+ [["getDailyStats(from,to)","occupancy, ADR, RevPAR, รายได้ รายวัน"],
+  ["getChannelMix(from,to)","ห้อง รายได้ คอมมิชชัน รายช่องทาง"],
+  ["getCancellations(from,to)","จำนวนและอัตรายกเลิก แยกช่องทางและเหตุผล"],
+  ["getForecast(days)","ห้องที่จองแล้ว ค่าคาดการณ์ ราคาที่แนะนำ"],
+  ["getCompSet(date)","ราคาคู่แข่งที่ scrape ไว้ พร้อมเวลาที่ดึง"],
+  ["comparePeriods(a,b)","แยกส่วนสาเหตุ ปริมาณ vs ราคา"]
+ ].map(r=>`<tr><td><code style="font-family:var(--mono);font-size:12px;color:var(--brand)">${r[0]}</code></td><td style="color:var(--ink2)">${r[1]}</td></tr>`).join("")+`</tbody>`;
+
+document.getElementById("roadmap").innerHTML =
+ [["Portal + dashboard","ทำข้อมูลให้นิ่งก่อน login แยกโรงแรม import ข้อมูล และ 8 ตัวชี้วัด ยังไม่มี AI"],
+  ["รายงานที่ AI ร่าง","ทีม consult ได้ประโยชน์ทันที เพราะเป็นงานซ้ำที่โครงสร้างเหมือนกันทุกเดือน และมีคนตรวจก่อนส่งเสมอ"],
+  ["Copilot ถามตอบ","เปิดให้ลูกค้าถามเอง หลังจากข้อมูลนิ่งและได้ตรวจคุณภาพคำตอบจากเฟสสองแล้ว"],
+  ["คำแนะนำราคา","ต้องมีข้อมูลย้อนหลังอย่างน้อย 12–24 เดือนถึงจะพยากรณ์ได้แม่น เริ่มจากโรงแรมที่ข้อมูลครบก่อน"],
+  ["LINE Alert","ตัวที่ทำให้เลิกใช้ยาก แต่ต้องมาหลังสุด เพราะเตือนผิดบ่อยครั้งเดียวคนจะปิดแจ้งเตือนทิ้ง"]
+ ].map((r,i)=>`<div class="step"><span class="stepnum">${i+1}</span><div><b>${r[0]}</b><p>${r[1]}</p></div></div>`).join("");
+
+/* ============ 4. Copilot ============ */
+const QA = [
+ { q:"ทำไมรายได้เดือน ส.ค. ตกจาก ก.ค.",
+   a:()=>`<p>รายได้ห้องพักเดือนสิงหาคมอยู่ที่ <mark>${baht(AUG.rev)}</mark> ${dRev<0?"ลดลง":"เพิ่มขึ้น"} <mark>${baht(Math.abs(dRev))}</mark> (${Math.abs(revChangePct).toFixed(1)}%) จากกรกฎาคม แยกสาเหตุได้สองส่วน</p>
+   <ul>
+     <li><b>ปริมาณ</b> ขายได้ ${AUG.sold.toLocaleString()} คืน เทียบ ${JUL.sold.toLocaleString()} คืนในเดือนก่อน ต่างกัน ${Math.abs(AUG.sold-JUL.sold).toLocaleString()} คืน คิดเป็นผลกระทบ <mark>${baht(Math.abs(volEffect))}</mark></li>
+     <li><b>ราคา</b> ADR ${baht(AUG.adr)} เทียบ ${baht(JUL.adr)} ต่างกัน ${baht(Math.abs(AUG.adr-JUL.adr))} ต่อห้อง คิดเป็น <mark>${baht(Math.abs(rateEffect))}</mark></li>
+   </ul>
+   <p>${Math.abs(volEffect)>Math.abs(rateEffect)?"ตัวการหลักคือปริมาณห้องที่ขายได้น้อยลง ไม่ใช่ราคาที่ลดลง":"ตัวการหลักคือราคาเฉลี่ยที่ลดลง ไม่ใช่ปริมาณ"} อัตราเข้าพักลดจาก ${pct(JUL.occ*100)} เหลือ ${pct(AUG.occ*100)} ซึ่งเป็นจังหวะปกติของช่วงเปลี่ยนเข้าสู่โลว์ซีซันหัวหิน</p>`,
+   src:["daily_stats · 1 ก.ค.–31 ส.ค. (62 แถว)","comparePeriods(ก.ค., ส.ค.)"] },
+
+ { q:"ช่องทางไหนทำกำไรสุทธิดีที่สุด",
+   a:()=>`<p>เรียงตามรายได้สุทธิหลังหักคอมมิชชันของเดือนสิงหาคม</p>
+   <ul>${chanAug.slice(0,4).map(c=>`<li><b>${c.n}</b> — สุทธิ <mark>${baht(c.net)}</mark> จากรายได้รวม ${baht(c.rev)} (จ่ายคอม ${Math.round(c.comm*100)}% = ${baht(c.fee)})</li>`).join("")}</ul>
+   <p>ที่น่าสนใจคือ <b>เว็บโรงแรม (ตรง)</b> ขายได้แค่ ${direct.rooms.toLocaleString()} ห้อง น้อยกว่า Agoda มาก แต่ ADR สูงกว่าที่ <mark>${baht(direct.adr)}</mark> และแทบไม่เสียคอมมิชชัน ทุก 10 ห้องที่ย้ายจาก OTA มาช่องทางตรงได้ จะเพิ่มเงินเข้าโรงแรมราว <mark>${baht((direct.adr*0.98 - chanAug.find(c=>c.k==='agoda').adr*0.82)*10)}</mark></p>
+   <p>เดือนนี้จ่ายค่าคอมมิชชันรวมทุกช่องทาง <mark>${baht(feeTotal)}</mark> คิดเป็น ${pct(feeTotal/AUG.rev*100)} ของรายได้ห้องพัก</p>`,
+   src:["channel_mix · ส.ค. 2569","commission_rates"] },
+
+ { q:"เสาร์หน้าควรตั้งราคาเท่าไหร่",
+   a:()=>{const s=fc.find(f=>f.d.getDate()===12)||fc[5];
+   return `<p>วันเสาร์ที่ 12 ก.ย. ตอนนี้จองแล้ว <mark>${s.otb} จาก ${ROOMS} ห้อง</mark> โมเดลคาดว่าจะปิดที่ราว ${Math.round(s.proj*100)}%</p>
+   <p>ราคาที่ตั้งอยู่ตอนนี้คือ <mark>${baht(s.curRate)}</mark> ขณะที่มัธยฐานคู่แข่ง 5 แห่งอยู่ที่ <mark>${baht(compMed)}</mark> และมี ${belowCount} แห่งตั้งสูงกว่าเรา</p>
+   <ul>${COMP.map(c=>`<li>${c.n} — ${baht(c.adr)} (จองแล้ว ${Math.round(c.occ*100)}%)</li>`).join("")}</ul>
+   <p>คำแนะนำคือขยับเป็น <mark>${baht(s.newRate)}</mark> ${s.delta>0?"(+"+Math.round(s.delta*100)+"%)":""} ยังต่ำกว่ามัธยฐานตลาดอยู่เล็กน้อยจึงไม่เสี่ยงเกินไป และถ้ายอดจองเป็นไปตามคาดจะได้เพิ่มราว ${baht((s.newRate-s.curRate)*s.expect)} เฉพาะวันนี้วันเดียว</p>`},
+   src:["forecast_daily · 12 ก.ย.","comp_set_rates · ดึงเมื่อ 07 ก.ย. 05:30","booking_pace · 28 วัน"] },
+
+ { q:"ยอดยกเลิกสูงผิดปกติไหม",
+   a:()=>`<p>อัตรายกเลิกรวมเดือนสิงหาคมอยู่ที่ <mark>${pct(AUG.cancRate*100)}</mark> เทียบค่าเฉลี่ย 90 วันที่ ${pct(ALL.cancRate*100)} ภาพรวมยังไม่ผิดปกติ แต่รายช่องทางมีจุดที่ต้องดู</p>
+   <ul>${[...chanAug].sort((a,b)=>b.cancRate-a.cancRate).slice(0,3).map(c=>`<li><b>${c.n}</b> — <mark>${pct(c.cancRate*100)}</mark> ${c.cancRate>ALL.cancRate*1.25?"<span style='color:var(--neg)'>สูงกว่าค่าเฉลี่ยโรงแรมอย่างมีนัย</span>":""}</li>`).join("")}</ul>
+   <p>Booking.com สูงกว่าค่าเฉลี่ยโรงแรมประมาณ ${((booking.cancRate/ALL.cancRate-1)*100).toFixed(0)}% ควรตรวจสองเรื่อง หนึ่ง สัดส่วนเรตยกเลิกฟรีบนช่องทางนี้ สอง ระยะเวลาจองล่วงหน้า เพราะการจองที่ห่างจากวันเข้าพักมากมักถูกยกเลิกมากกว่า</p>
+   <p>ถ้าลดอัตรายกเลิกของ Booking.com ลงมาเท่าค่าเฉลี่ยโรงแรมได้ จะรักษาห้องไว้ได้ราว <mark>${Math.round(booking.canc - (booking.rooms+booking.canc)*ALL.cancRate)}</mark> ห้องต่อเดือน</p>`,
+   src:["cancellations · ส.ค. 2569","daily_stats · 90 วัน"] },
+
+ { q:"เทียบกับตลาดหัวหิน เราอยู่ตรงไหน",
+   a:()=>`<p>เทียบราคาห้องมาตรฐานวันเสาร์ 12 ก.ย. กับคู่แข่งที่ตั้งไว้ใน comp set 5 แห่ง</p>
+   <ul>${[...COMP,{n:"บ้านทะเล (เรา)",adr:OUR_SAT_RATE,occ:.71}].sort((a,b)=>b.adr-a.adr).map(c=>`<li>${c.n===("บ้านทะเล (เรา)")?"<b>"+c.n+"</b>":c.n} — ${baht(c.adr)}</li>`).join("")}</ul>
+   <p>เราอยู่อันดับ <mark>${belowCount+1} จาก 6</mark> ราคาเฉลี่ยตลาดคือ ${baht(compAvg)} มัธยฐาน ${baht(compMed)} เราต่ำกว่ามัธยฐานอยู่ <mark>${pct((1-OUR_SAT_RATE/compMed)*100)}</mark></p>
+   <p>ข้อควรระวัง ราคาถูกกว่าไม่ได้แปลว่าเสียเปรียบเสมอไป ต้องดู RevPAR ประกอบ ตอนนี้ RevPAR เดือนสิงหาคมของเราอยู่ที่ ${baht(AUG.revpar)} แต่ระบบยังไม่มีข้อมูล RevPAR ของคู่แข่ง จึงยังเทียบตรงจุดนี้ไม่ได้</p>`,
+   src:["comp_set_rates · ดึงเมื่อ 07 ก.ย. 05:30","daily_stats · ส.ค. 2569"] }
+];
+
+const msgs=document.getElementById("msgs"), asklist=document.getElementById("asklist");
+function bot(html,src,meta){
+  const d=document.createElement("div"); d.className="msg bot";
+  d.innerHTML=`<div class="ai"><div class="aihead"><span class="aichip">Copilot</span><span class="meta">${meta||"ตอบจากผลลัพธ์ query · 0.9 วินาที"}</span></div>${html}${src?`<div class="src">ข้อมูลอ้างอิง${src.map(s=>`<span class="srcchip">${s}</span>`).join("")}</div>`:""}</div>`;
+  msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d;
+}
+function me(t){const d=document.createElement("div");d.className="msg me";d.textContent=t;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
+
+bot(`<p>สวัสดีค่ะ ถามเรื่องตัวเลขของบ้านทะเล รีสอร์ท ได้เลย ข้อมูลล่าสุดซิงก์เมื่อ 06:10 น. วันนี้ ครอบคลุมการจอง 90 วันย้อนหลังและยอดจองล่วงหน้าอีก 60 วัน</p>`,null,"เริ่มการสนทนา");
+
+let busy=false;
+function ask(item,btn){
+  if(busy) return; busy=true;
+  me(item.q);
+  const t=bot(`<p class="typing"><span></span><span></span><span></span></p>`,null,"กำลัง query ข้อมูล…");
+  setTimeout(()=>{
+    t.remove(); bot(item.a(), item.src);
+    if(btn) btn.classList.add("used");
+    busy=false;
+  }, 850);
+}
+QA.forEach(item=>{
+  const b=document.createElement("button"); b.className="askbtn"; b.textContent=item.q;
+  b.onclick=()=>ask(item,b); asklist.appendChild(b);
+});
+document.getElementById("composer").onsubmit=e=>{
+  e.preventDefault();
+  const v=document.getElementById("qinput").value.trim(); if(!v||busy) return;
+  document.getElementById("qinput").value="";
+  const hit=QA.find(q=>{
+    const k=v.replace(/\s/g,"");
+    return ["รายได้","ตก","ลด"].some(w=>k.includes(w))&&q.q.includes("รายได้") ||
+           ["ช่องทาง","กำไร","คอม","OTA"].some(w=>k.includes(w))&&q.q.includes("ช่องทาง") ||
+           ["ราคา","เสาร์","ตั้ง"].some(w=>k.includes(w))&&q.q.includes("ราคา") ||
+           ["ยกเลิก","cancel"].some(w=>k.includes(w))&&q.q.includes("ยกเลิก") ||
+           ["ตลาด","คู่แข่ง","เทียบ"].some(w=>k.includes(w))&&q.q.includes("ตลาด");
+  });
+  if(hit){ busy=true; me(v);
+    const t=bot(`<p class="typing"><span></span><span></span><span></span></p>`,null,"กำลัง query ข้อมูล…");
+    setTimeout(()=>{t.remove();bot(hit.a(),hit.src);busy=false;},850);
+  } else {
+    me(v);
+    bot(`<p>ต้นแบบนี้เตรียมคำตอบไว้ 5 คำถามเท่านั้น ลองเลือกจากรายการด้านขวาดูค่ะ</p>
+    <p style="color:var(--ink3);font-size:12.5px">ในระบบจริงคำถามนี้จะถูกแปลงเป็นการเรียกฟังก์ชัน query แล้วเรียบเรียงคำตอบจากผลลัพธ์ ถ้าไม่มีข้อมูลรองรับ ระบบจะตอบว่าไม่มีข้อมูล ไม่ใช่เดาตัวเลขให้</p>`,null,"ต้นแบบสาธิต");
+  }
+};
+
+/* ============ 5. นำทาง ============ */
+const views=["dash","copilot","report","pricing","alerts","build"];
+document.querySelectorAll(".navbtn").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll(".navbtn").forEach(x=>x.setAttribute("aria-current","false"));
+    b.setAttribute("aria-current","true");
+    views.forEach(v=>document.getElementById("view-"+v).classList.toggle("hidden", v!==b.dataset.view));
+    window.scrollTo({top:0,behavior:"instant"});
+  };
+});
+</script>
+
+</body>
+</html>
