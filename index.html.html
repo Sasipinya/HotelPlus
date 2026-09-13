@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ข้อเสนอผลิตภัณฑ์ H+ Reputation AI สำหรับ HotelPlus">
+  <title>H+ Reputation AI — Product Proposal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #092235;
+      --navy: #071a29;
+      --teal: #087f83;
+      --teal-soft: #dff2f1;
+      --coral: #ef694d;
+      --mist: #edf4f5;
+      --paper: #fbfcfc;
+      --white: #fff;
+      --muted: #5f747d;
+      --line: #cbdadd;
+      --success: #16845b;
+      --warning: #d88b18;
+      --danger: #c84b42;
+      --radius: 18px;
+      --shadow: 0 22px 60px rgba(4, 35, 48, .13);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--mist);
+      font-family: "Kanit", sans-serif;
+      line-height: 1.65;
+      text-rendering: optimizeLegibility;
+    }
+
+    button, input, select, textarea { font-family: inherit; }
+
+    a { color: inherit; }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    :focus-visible {
+      outline: 3px solid var(--coral);
+      outline-offset: 4px;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 24px auto;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      padding: 14px clamp(22px, 5vw, 64px);
+      color: var(--white);
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      aspect-ratio: 1;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--navy);
+      background: var(--white);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: #c7d9df;
+      font-size: 13px;
+    }
+
+    .print-button {
+      padding: 9px 14px;
+      color: var(--white);
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, .35);
+      border-radius: 999px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      min-height: 620px;
+      color: var(--white);
+      background: var(--navy);
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 72px clamp(28px, 6vw, 84px);
+    }
+
+    .kicker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 28px;
+      color: #8ed1ce;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .kicker::before {
+      width: 34px;
+      height: 2px;
+      background: var(--coral);
+      content: "";
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      max-width: 650px;
+      margin-bottom: 26px;
+      font-size: clamp(46px, 6.4vw, 82px);
+      font-weight: 700;
+      line-height: 1.02;
+      letter-spacing: -.055em;
+    }
+
+    .hero-lead {
+      max-width: 580px;
+      margin-bottom: 36px;
+      color: #c9d9df;
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.6;
+    }
+
+    .hero-promise {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      max-width: 560px;
+      padding-top: 26px;
+      border-top: 1px solid rgba(255, 255, 255, .16);
+      color: #ebf4f5;
+    }
+
+    .pulse {
+      flex: 0 0 auto;
+      width: 13px;
+      height: 13px;
+      margin-top: 7px;
+      border: 3px solid var(--coral);
+      border-radius: 50%;
+      box-shadow: 0 0 0 6px rgba(239, 105, 77, .16);
+    }
+
+    .hero-visual {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 560px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 48% 45%, rgba(30, 167, 165, .24), transparent 30%),
+        linear-gradient(125deg, #09273a, #061725);
+    }
+
+    .signal-rings,
+    .signal-rings::before,
+    .signal-rings::after {
+      position: absolute;
+      border: 1px solid rgba(121, 207, 205, .18);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .signal-rings { width: 420px; height: 420px; }
+    .signal-rings::before { inset: 54px; }
+    .signal-rings::after { inset: 112px; }
+
+    .score-orbit {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      width: 210px;
+      aspect-ratio: 1;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--white);
+      color: var(--navy);
+      box-shadow: 0 22px 70px rgba(0, 0, 0, .28);
+    }
+
+    .score-orbit strong {
+      display: block;
+      font-size: 72px;
+      line-height: .9;
+      letter-spacing: -.08em;
+    }
+
+    .score-orbit span {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .signal-note {
+      position: absolute;
+      z-index: 2;
+      max-width: 190px;
+      padding: 13px 16px;
+      border: 1px solid rgba(255, 255, 255, .15);
+      border-radius: 13px;
+      background: rgba(10, 39, 56, .88);
+      backdrop-filter: blur(10px);
+      color: #d9e8eb;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .signal-note b { color: var(--white); }
+    .note-one { top: 20%; left: 7%; }
+    .note-two { right: 7%; bottom: 19%; }
+
+    .section {
+      padding: 90px clamp(28px, 7vw, 92px);
+    }
+
+    .section-dark {
+      color: var(--white);
+      background: var(--navy);
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: .7fr 1.3fr;
+      gap: 50px;
+      margin-bottom: 58px;
+      align-items: end;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 0;
+      font-size: clamp(34px, 4.4vw, 56px);
+      line-height: 1.12;
+      letter-spacing: -.045em;
+    }
+
+    .section-heading p {
+      max-width: 610px;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .section-dark .section-heading p { color: #abc0c8; }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .problem {
+      padding: 32px 30px 34px 0;
+    }
+
+    .problem + .problem {
+      padding-left: 30px;
+      border-left: 1px solid var(--line);
+    }
+
+    .problem strong {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--teal);
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    .problem h3 { margin-bottom: 8px; font-size: 19px; }
+    .problem p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .product-demo {
+      overflow: hidden;
+      border: 1px solid #bfcfd3;
+      border-radius: 20px;
+      background: #f1f5f6;
+      box-shadow: 0 26px 60px rgba(8, 36, 48, .12);
+    }
+
+    .demo-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      color: var(--white);
+      background: #0b293a;
+    }
+
+    .demo-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .demo-brand i { width: 10px; height: 10px; border-radius: 50%; background: var(--coral); }
+    .demo-meta { color: #aec5cc; font-size: 12px; }
+
+    .demo-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr) 270px;
+      min-height: 490px;
+    }
+
+    .demo-nav {
+      padding: 22px 14px;
+      color: #536a73;
+      background: #e7eef0;
+      border-right: 1px solid #cddadd;
+    }
+
+    .demo-nav strong {
+      display: block;
+      margin: 0 10px 14px;
+      color: #82959c;
+      font-size: 11px;
+    }
+
+    .nav-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    .nav-item.active { color: var(--white); background: var(--teal); }
+
+    .demo-inbox { padding: 24px; background: var(--white); }
+
+    .inbox-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .inbox-head h3 { margin: 0; font-size: 20px; }
+    .inbox-head span { color: var(--muted); font-size: 12px; }
+
+    .review-card {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 13px;
+      padding: 16px 0;
+      border-top: 1px solid #e1eaec;
+    }
+
+    .avatar {
+      display: grid;
+      width: 42px;
+      aspect-ratio: 1;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--white);
+      background: var(--teal);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .review-top { display: flex; justify-content: space-between; gap: 12px; }
+    .review-top b { font-size: 14px; }
+    .stars { color: var(--warning); font-size: 12px; white-space: nowrap; }
+    .review-text { margin: 6px 0 10px; color: #536a73; font-size: 13px; line-height: 1.55; }
+
+    .tag {
+      display: inline-block;
+      margin: 0 5px 4px 0;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #47616a;
+      background: #eaf1f2;
+      font-size: 10px;
+    }
+
+    .tag.urgent { color: #9f352e; background: #fae5e1; }
+
+    .ai-panel {
+      padding: 24px 20px;
+      color: #dfecef;
+      background: #0d3043;
+    }
+
+    .ai-panel h3 { margin-bottom: 6px; color: var(--white); font-size: 17px; }
+    .ai-panel > p { color: #9cb7c0; font-size: 12px; }
+
+    .insight {
+      margin-top: 20px;
+      padding: 16px;
+      border-left: 3px solid var(--coral);
+      background: rgba(255, 255, 255, .06);
+      font-size: 12px;
+    }
+
+    .insight b { display: block; margin-bottom: 5px; color: var(--white); }
+
+    .action-box {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, .13);
+      font-size: 12px;
+    }
+
+    .action-label { color: #86d1cc; }
+
+    .mini-button {
+      display: block;
+      width: 100%;
+      margin-top: 14px;
+      padding: 10px;
+      border: 0;
+      border-radius: 8px;
+      color: var(--navy);
+      background: #94dad5;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border: 1px solid rgba(255, 255, 255, .16);
+    }
+
+    .flow-step {
+      position: relative;
+      min-height: 190px;
+      padding: 28px 22px;
+    }
+
+    .flow-step + .flow-step { border-left: 1px solid rgba(255, 255, 255, .16); }
+    .flow-step span { color: #83ccc9; font-size: 12px; }
+    .flow-step h3 { margin: 32px 0 8px; font-size: 17px; }
+    .flow-step p { margin: 0; color: #a9bec6; font-size: 13px; }
+    .flow-step:not(:last-child)::after {
+      position: absolute;
+      z-index: 2;
+      top: 31px;
+      right: -8px;
+      width: 15px;
+      height: 15px;
+      border-top: 1px solid #83ccc9;
+      border-right: 1px solid #83ccc9;
+      background: var(--navy);
+      transform: rotate(45deg);
+      content: "";
+    }
+
+    .capabilities {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .capability {
+      min-height: 210px;
+      padding: 34px;
+      background: var(--paper);
+    }
+
+    .capability h3 { margin-bottom: 12px; font-size: 21px; }
+    .capability p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .capability-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 28px;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--white);
+      background: var(--teal);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .mvp-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 70px;
+      align-items: start;
+    }
+
+    .mvp-layout h2 {
+      margin-bottom: 22px;
+      font-size: clamp(36px, 4.6vw, 58px);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+    }
+
+    .mvp-layout > div > p { max-width: 510px; color: #b3c6cc; font-size: 17px; }
+
+    .scope-list { margin: 0; padding: 0; list-style: none; }
+
+    .scope-list li {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 13px;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .14);
+      color: #dfeaec;
+      font-size: 14px;
+    }
+
+    .check {
+      display: grid;
+      width: 21px;
+      height: 21px;
+      margin-top: 2px;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--navy);
+      background: #8fd4cf;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .guardrails {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 56px;
+      align-items: center;
+      padding: 48px;
+      background: var(--teal-soft);
+      border-left: 6px solid var(--teal);
+    }
+
+    .guardrails h2 { margin-bottom: 12px; font-size: 31px; letter-spacing: -.03em; }
+    .guardrails p { margin: 0; color: #45616a; }
+    .guardrails ul { margin: 0; padding-left: 20px; color: #294b55; }
+    .guardrails li + li { margin-top: 8px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 42px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .metric { padding: 28px 24px; }
+    .metric + .metric { border-left: 1px solid var(--line); }
+    .metric strong { display: block; margin-bottom: 7px; color: var(--teal); font-size: 25px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+
+    .closing {
+      position: relative;
+      overflow: hidden;
+      padding: 90px clamp(28px, 8vw, 110px);
+      color: var(--white);
+      background: var(--coral);
+    }
+
+    .closing::after {
+      position: absolute;
+      right: -100px;
+      bottom: -170px;
+      width: 430px;
+      height: 430px;
+      border: 70px solid rgba(255, 255, 255, .12);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .closing h2 {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin-bottom: 24px;
+      font-size: clamp(38px, 5vw, 66px);
+      line-height: 1.08;
+      letter-spacing: -.05em;
+    }
+
+    .closing p { position: relative; z-index: 1; max-width: 650px; font-size: 19px; }
+
+    .next-step {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      margin-top: 18px;
+      padding: 13px 20px;
+      border-radius: 999px;
+      color: var(--white);
+      background: var(--navy);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .sources {
+      padding: 32px clamp(28px, 7vw, 92px) 42px;
+      color: #667a82;
+      background: #eef3f4;
+      font-size: 11px;
+    }
+
+    .sources strong { display: block; margin-bottom: 8px; color: var(--ink); }
+    .sources a { text-underline-offset: 2px; }
+
+    @media (max-width: 900px) {
+      .hero, .section-heading, .mvp-layout, .guardrails { grid-template-columns: 1fr; }
+      .hero-copy { min-height: 570px; }
+      .hero-visual { min-height: 520px; }
+      .section-heading { gap: 20px; }
+      .problem-grid { grid-template-columns: 1fr; }
+      .problem, .problem + .problem { padding: 25px 0; border-left: 0; }
+      .problem + .problem { border-top: 1px solid var(--line); }
+      .demo-layout { grid-template-columns: 170px 1fr; }
+      .ai-panel { grid-column: 1 / -1; }
+      .flow { grid-template-columns: 1fr; }
+      .flow-step { min-height: auto; }
+      .flow-step + .flow-step { border-top: 1px solid rgba(255, 255, 255, .16); border-left: 0; }
+      .flow-step:not(:last-child)::after { display: none; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metric:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+      .metric:nth-child(4) { border-top: 1px solid var(--line); }
+    }
+
+    @media (max-width: 620px) {
+      .page { width: 100%; margin: 0; }
+      .top-actions span { display: none; }
+      .hero-copy, .section { padding-left: 22px; padding-right: 22px; }
+      .signal-rings { width: 330px; height: 330px; }
+      .note-one { top: 12%; left: 4%; }
+      .note-two { right: 4%; bottom: 12%; }
+      .demo-layout { display: block; }
+      .demo-nav { display: none; }
+      .capabilities, .metrics { grid-template-columns: 1fr; }
+      .metric + .metric, .metric:nth-child(3) { border-top: 1px solid var(--line); border-left: 0; }
+      .guardrails { padding: 30px 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+
+    @media print {
+      @page { margin: 12mm; size: A4; }
+      body { background: #fff; }
+      .page { width: 100%; margin: 0; box-shadow: none; }
+      .print-button { display: none; }
+      .hero, .hero-visual, .section-dark, .closing { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .section { padding: 52px 38px; }
+      .hero { min-height: 0; }
+      .hero-copy, .hero-visual { min-height: 520px; }
+      .product-demo, .capabilities, .guardrails, .problem-grid, .flow, .metrics { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">H+</span> HotelPlus</div>
+      <div class="top-actions">
+        <span>Product proposal · September 2026</span>
+        <button class="print-button" type="button" onclick="window.print()">พิมพ์ / บันทึก PDF</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="kicker">ข้อเสนอผลิตภัณฑ์สำหรับ HotelPlus</p>
+        <h1>เสียงของแขก ไม่ควรจบแค่คำตอบ</h1>
+        <p class="hero-lead">H+ Reputation AI รวมทุกรีวิว วิเคราะห์ต้นเหตุ ร่างคำตอบ และเปลี่ยนคำติให้เป็นงานปรับปรุงที่วัดผลได้</p>
+        <div class="hero-promise">
+          <span class="pulse" aria-hidden="true"></span>
+          <span><strong>จาก reputation สู่ revenue</strong><br>เชื่อมข้อมูลรีวิวเข้ากับความเชี่ยวชาญของ HotelPlus และ RevPlus+</span>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="ภาพแนวคิดคะแนนรีวิวและสัญญาณสำคัญ">
+        <div class="signal-rings" aria-hidden="true"></div>
+        <div class="score-orbit"><div><strong>4.3</strong><span>คะแนนภาพรวม<br>เพิ่มขึ้น 0.2</span></div></div>
+        <div class="signal-note note-one"><b>สัญญาณบวก</b><br>แขกชื่นชมอาหารเช้าเพิ่มขึ้น 22%</div>
+        <div class="signal-note note-two"><b>ต้องลงมือวันนี้</b><br>Wi‑Fi ชั้น 4 ถูกกล่าวถึง 3 ครั้ง</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <h2>ช่องว่างที่ยังไม่มีใครปิด</h2>
+        <p>โรงแรมมีรีวิวกระจายหลายช่องทาง แต่คะแนนไม่ได้บอกว่าควรแก้อะไร ใครต้องทำ และผลลัพธ์ต่อรายได้เป็นอย่างไร</p>
+      </div>
+      <div class="problem-grid">
+        <article class="problem">
+          <strong>01</strong>
+          <h3>ข้อมูลกระจัดกระจาย</h3>
+          <p>ทีมต้องเปิดหลายระบบเพื่อตรวจรีวิว ตอบช้า และมองไม่เห็นภาพรวมหลายสาขา</p>
+        </article>
+        <article class="problem">
+          <strong>02</strong>
+          <h3>คำติไม่กลายเป็นงาน</h3>
+          <p>ตอบแขกแล้วปัญหาจบใน inbox โดยไม่มีเจ้าของงาน กำหนดเวลา หรือการตรวจว่าปัญหาเกิดซ้ำหรือไม่</p>
+        </article>
+        <article class="problem">
+          <strong>03</strong>
+          <h3>ไม่เชื่อมกับรายได้</h3>
+          <p>เจ้าของโรงแรมยังไม่เห็นความสัมพันธ์ระหว่างประสบการณ์แขก คะแนนรีวิว และ performance ของห้องพัก</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="product">
+      <div class="section-heading">
+        <h2>หนึ่ง inbox<br>หนึ่งชุดคำตอบ</h2>
+        <p>หน้าจอเดียวสำหรับทีมโรงแรมและ HotelPlus: รู้ว่าเกิดอะไรขึ้น ตอบอย่างไร และต้องส่งต่อให้ใคร</p>
+      </div>
+
+      <div class="product-demo" aria-label="ตัวอย่างหน้าจอ H+ Reputation AI">
+        <div class="demo-bar">
+          <div class="demo-brand"><i aria-hidden="true"></i> H+ Reputation AI</div>
+          <div class="demo-meta">The Riverside Hotel · วันนี้</div>
+        </div>
+        <div class="demo-layout">
+          <nav class="demo-nav" aria-label="เมนูตัวอย่าง">
+            <strong>พื้นที่ทำงาน</strong>
+            <div class="nav-item active"><span>รีวิวทั้งหมด</span><b>18</b></div>
+            <div class="nav-item"><span>รออนุมัติ</span><b>4</b></div>
+            <div class="nav-item"><span>งานแก้ไข</span><b>3</b></div>
+            <div class="nav-item"><span>ข้อมูลเชิงลึก</span></div>
+          </nav>
+
+          <div class="demo-inbox">
+            <div class="inbox-head">
+              <h3>รีวิวล่าสุด</h3>
+              <span>เรียงตามความเร่งด่วน</span>
+            </div>
+            <article class="review-card">
+              <div class="avatar">MS</div>
+              <div>
+                <div class="review-top"><b>Maria S. · Google</b><span class="stars">★★☆☆☆</span></div>
+                <p class="review-text">ห้อง 402 แอร์ไม่เย็น แจ้งแล้วรอช่างเกือบสองชั่วโมง พนักงานสุภาพแต่การแก้ไขช้าเกินไป</p>
+                <span class="tag urgent">เร่งด่วน</span><span class="tag">เครื่องปรับอากาศ</span><span class="tag">เวลาตอบสนอง</span>
+              </div>
+            </article>
+            <article class="review-card">
+              <div class="avatar" style="background:#d88b18">KT</div>
+              <div>
+                <div class="review-top"><b>K. Tawan · Booking.com</b><span class="stars">★★★★★</span></div>
+                <p class="review-text">อาหารเช้าดีมาก มีเมนูท้องถิ่นและพนักงานจำได้ว่าเราแพ้อาหารอะไร ประทับใจครับ</p>
+                <span class="tag">อาหารเช้า</span><span class="tag">พนักงาน</span><span class="tag">จุดขาย</span>
+              </div>
+            </article>
+          </div>
+
+          <aside class="ai-panel">
+            <h3>AI brief</h3>
+            <p>สรุปจากรีวิวที่เลือกและประวัติ 90 วัน</p>
+            <div class="insight">
+              <b>พบปัญหาเกิดซ้ำ</b>
+              คำร้องเรียนเรื่องแอร์ชั้น 4 เพิ่มขึ้นเป็นครั้งที่ 4 ในเดือนนี้
+            </div>
+            <div class="action-box">
+              <span class="action-label">งานที่แนะนำ</span>
+              <p>ตรวจแอร์ห้อง 401–408 และประวัติการซ่อมภายในวันนี้</p>
+              <span class="action-label">ผู้รับผิดชอบ</span>
+              <p>Engineering · กำหนดวันนี้ 16:00</p>
+              <button class="mini-button" type="button">สร้างงานแก้ไข</button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="section-heading">
+        <h2>จากรีวิว<br>สู่การเปลี่ยนแปลง</h2>
+        <p>AI ทำงานในส่วนที่ต้องอ่านและจัดหมวดหมู่จำนวนมาก ส่วนทีมโรงแรมยังเป็นผู้ตัดสินใจก่อนตอบหรือชดเชยลูกค้า</p>
+      </div>
+      <div class="flow">
+        <article class="flow-step"><span>ขั้นที่ 1</span><h3>รับรีวิว</h3><p>Google และ Booking.com เข้าสู่ inbox เดียว</p></article>
+        <article class="flow-step"><span>ขั้นที่ 2</span><h3>อ่านสัญญาณ</h3><p>ภาษา อารมณ์ หัวข้อ ความเร่งด่วน และเรื่องที่เกิดซ้ำ</p></article>
+        <article class="flow-step"><span>ขั้นที่ 3</span><h3>ร่างคำตอบ</h3><p>ใช้ภาษาของแขกและน้ำเสียงเฉพาะของโรงแรม</p></article>
+        <article class="flow-step"><span>ขั้นที่ 4</span><h3>เปิดงานแก้ไข</h3><p>มอบหมายแผนก ผู้รับผิดชอบ และกำหนดเวลา</p></article>
+        <article class="flow-step"><span>ขั้นที่ 5</span><h3>วัดผล</h3><p>ติดตามคะแนน ปัญหาซ้ำ และความสัมพันธ์กับรายได้</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading">
+        <h2>AI ที่ช่วยงานจริง</h2>
+        <p>ความต่างไม่ใช่จำนวนโมเดล แต่คือความสามารถในการเปลี่ยนข้อความสั้น ๆ ของแขกให้กลายเป็นการตัดสินใจที่ทีมทำต่อได้ทันที</p>
+      </div>
+      <div class="capabilities">
+        <article class="capability"><div class="capability-mark">A</div><h3>Multilingual intelligence</h3><p>เข้าใจรีวิวไทย อังกฤษ จีน และภาษาอื่น พร้อมจัดหมวดหมู่ความสะอาด บริการ อาหาร สิ่งอำนวยความสะดวก และความปลอดภัย</p></article>
+        <article class="capability"><div class="capability-mark">B</div><h3>Brand voice copilot</h3><p>ร่างคำตอบจากข้อมูลจริงและน้ำเสียงของโรงแรม ปรับให้สุภาพ เป็นธรรมชาติ และไม่สัญญาสิ่งที่ไม่มีสิทธิ์อนุมัติ</p></article>
+        <article class="capability"><div class="capability-mark">C</div><h3>Root-cause detection</h3><p>รวมข้อร้องเรียนที่คล้ายกันตามห้อง ชั้น ช่วงเวลา หรือแผนก เพื่อให้ทีมเห็นต้นเหตุแทนการแก้ทีละรีวิว</p></article>
+        <article class="capability"><div class="capability-mark">D</div><h3>Reputation-to-revenue</h3><p>เชื่อมกับ RevPlus+ เพื่อเทียบแนวโน้มคะแนนกับ ADR, occupancy, cancellation และ direct booking โดยไม่กล่าวอ้างเหตุและผลเกินข้อมูล</p></article>
+      </div>
+    </section>
+
+    <section class="section section-dark">
+      <div class="mvp-layout">
+        <div>
+          <p class="kicker">ขอบเขตรุ่นแรก</p>
+          <h2>เล็กพอที่จะเริ่ม<br>ครบพอที่จะขาย</h2>
+          <p>เริ่มกับลูกค้า HotelPlus 3–5 โรงแรม ใช้งานจริงทุกวัน แล้วค่อยขยายช่องทางและ automation เมื่อเห็นพฤติกรรมที่เกิดขึ้นจริง</p>
+        </div>
+        <ul class="scope-list">
+          <li><span class="check">✓</span><span>Google Business Profile และ Booking.com Reviews</span></li>
+          <li><span class="check">✓</span><span>Inbox หลายโรงแรม พร้อม filter และสถานะ</span></li>
+          <li><span class="check">✓</span><span>AI วิเคราะห์หัวข้อ ความรู้สึก และความเร่งด่วน</span></li>
+          <li><span class="check">✓</span><span>ร่างคำตอบไทย–อังกฤษ พร้อม human approval</span></li>
+          <li><span class="check">✓</span><span>สร้างงาน มอบหมาย และติดตามปัญหาซ้ำ</span></li>
+          <li><span class="check">✓</span><span>สรุปรายสัปดาห์ผ่าน LINE หรืออีเมล</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="guardrails">
+        <div>
+          <h2>AI ช่วยคิด แต่ไม่ตัดสินใจแทน</h2>
+          <p>ความน่าเชื่อถือของ HotelPlus ต้องมาก่อน automation ระบบจึงออกแบบให้คนควบคุมจุดที่มีผลต่อแขกและชื่อเสียงโรงแรม</p>
+        </div>
+        <ul>
+          <li>ไม่เผยแพร่คำตอบอัตโนมัติในรุ่นแรก</li>
+          <li>ไม่แต่งข้อเท็จจริงหรือเสนอมูลค่าชดเชยเอง</li>
+          <li>ประเด็นความปลอดภัยและกฎหมายส่งต่อคนทันที</li>
+          <li>ข้อความรีวิวถือเป็นข้อมูล ไม่ใช่คำสั่งให้ AI</li>
+        </ul>
+      </div>
+
+      <div class="section-heading" style="margin-top:78px;margin-bottom:0">
+        <h2>ตัวชี้วัดความสำเร็จ</h2>
+        <p>วัดจากการตอบสนองและการแก้ปัญหา ไม่ใช่จำนวนข้อความที่ AI สร้าง</p>
+      </div>
+      <div class="metrics">
+        <div class="metric"><strong>&lt; 24 ชม.</strong><span>เวลาเฉลี่ยในการตอบรีวิว</span></div>
+        <div class="metric"><strong>Response rate</strong><span>สัดส่วนรีวิวที่ได้รับคำตอบ</span></div>
+        <div class="metric"><strong>Repeat issues</strong><span>จำนวนปัญหาที่เกิดซ้ำหลังปิดงาน</span></div>
+        <div class="metric"><strong>Rating trend</strong><span>คะแนนรายช่องทางและรายสาขา</span></div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>เปลี่ยนทุกรีวิวให้เป็นโอกาสปรับบริการและเพิ่มรายได้</h2>
+      <p>ขั้นถัดไป: เลือกโรงแรมนำร่องหนึ่งแห่ง เชื่อม Google Reviews และทดลอง workflow กับทีม HotelPlus เป็นเวลา 30 วัน</p>
+      <a class="next-step" href="mailto:info@hotelplus.asia?subject=H%2B%20Reputation%20AI%20Pilot">เริ่มโครงการนำร่อง</a>
+    </section>
+
+    <footer class="sources">
+      <strong>แหล่งข้อมูลประกอบข้อเสนอ</strong>
+      <a href="https://www.hotelplus.asia/service">HotelPlus Services</a> ·
+      <a href="https://www.hotelplus.asia/app-landing-page">RevPlus+</a> ·
+      <a href="https://www.cloudbeds.com/reputation-management/">Cloudbeds Reputation Management</a> ·
+      <a href="https://developers.google.com/my-business/content/review-data">Google Business Profile Review API</a> ·
+      <a href="https://developers.booking.com/connectivity/docs/review-api">Booking.com Review API</a>
+    </footer>
+  </main>
+</body>
+</html>
